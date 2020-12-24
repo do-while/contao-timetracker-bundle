@@ -1,0 +1,39 @@
+{
+    "name": "do-while/contao-timetracker-bundle",
+    "version": "0.1.3",
+    "time": "2020-12-24",
+    "description": "Simple Zeiterfassung",
+    "keywords": ["contao", "contentelement", "timetracker"],
+    "type": "contao-bundle",
+    "homepage": "https://www.softleister.de",
+    "license": "LGPL",
+    "authors": [{
+        "name": "Softleister - Hagen Klemp",
+        "homepage": "https://www.softleister.de",
+        "role": "Developer"
+    }],
+    "support": {
+        "email": "info@softleister.de"
+    },
+    "require": {
+        "php": ">=7.2",
+        "contao/core-bundle": "~4.9",
+        "codefog/contao-haste": "^4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Softleister\\TimetrackerBundle\\": "src/"
+        },
+        "classmap": [
+            "src/Resources/contao/"
+        ],
+        "exclude-from-classmap": [
+            "src/Resources/contao/config/",
+            "src/Resources/contao/dca/",
+            "src/Resources/contao/languages/"
+        ]
+    },
+    "extra": {
+		"contao-manager-plugin": "Softleister\\TimetrackerBundle\\ContaoManager\\Plugin"
+    }
+}

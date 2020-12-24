@@ -1,0 +1,36 @@
+/* Styles do-while/contao-timetracker-bundle */
+#tl_navigation .group-timetracker {
+    background: url(timetracker.svg) 3px 2px no-repeat;
+}
+.timetrack span:first-child {
+    display: inline-block;
+    width: 120px;
+}
+.timetrack.inactive {
+    color: #aaa;
+}
+
+.tl_img_submit {
+    width: 32px;
+    height: 32px;
+    text-indent: 32px;
+    top: 0;
+}
+.filter_apply, .filter_reset {
+    background-size: 32px 32px;
+}
+
+.logrow span:first-child {
+    display: inline-block;
+    width: 150px;
+}
+.logrow span:nth-child(2) {
+    display: inline-block;
+    width: 220px;
+}
+.logrow p {
+    margin-bottom: 5px;
+}
+.logrow .note {
+    padding-left: 370px;
+}
