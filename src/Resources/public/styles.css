@@ -34,3 +34,11 @@
 .logrow .note {
     padding-left: 370px;
 }
+
+.header_xls_export {
+    background-image: url(/system/themes/flexible/icons/theme_export.svg);
+    padding: 3px 0 3px 21px;
+    background-position: left center;
+    background-repeat: no-repeat;
+    margin-left: 15px;
+}

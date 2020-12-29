@@ -17,8 +17,10 @@ $GLOBALS['TL_DCA']['tl_timetracker_setting'] = array
 	(
 		'dataContainer'               => 'Table',
         'enableVersioning'            => true,
-        // 'closed'                      => isset( $GLOBALS['timetracker'] ),            // nur 1 Datensatz!
-        // 'notDeletable'                => true,
+		'onsubmit_callback' => array
+		(
+			array('tl_timetracker_setting', 'manageIds')
+		),
 		'sql' => array
 		(
 			'keys' => array
@@ -92,11 +94,11 @@ $GLOBALS['TL_DCA']['tl_timetracker_setting'] = array
 		'kunde'						  => '{type_legend},type;'
 										.'{kunden_legend},kundenname,kundennr,agentur,stundensatz;'
 										.'{detail_legend},beschreibung;'
-										.'{activate_legend},active',
+										.'{activate_legend},active,kundenID',
 		'task'						  => '{type_legend},type;'
-										.'{task_legend},aufgabe,abrechnung,taskID;'
+										.'{task_legend},aufgabe,abrechnung;'
 										.'{detail_legend},beschreibung;'
-										.'{activate_legend},active'
+										.'{activate_legend},active,taskID'
 	),
 
 	// Fields
@@ -144,6 +146,7 @@ $GLOBALS['TL_DCA']['tl_timetracker_setting'] = array
 			'exclude'                 => true,
 			'filter'                  => true,
 			'inputType'               => 'checkbox',
+			'eval'                    => ['tl_class'=>'m12 w50'],
 			'sql'                     => "char(1) NOT NULL default ''"
 		),
 //--- Kunde/Projekt ---
@@ -167,6 +170,10 @@ $GLOBALS['TL_DCA']['tl_timetracker_setting'] = array
 		),
 		'kundenID' => array
 		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_timetracker_setting']['kundenID'],
+			'exclude'                 => true,
+			'inputType'               => 'text',
+			'eval'                    => ['maxlength'=>8, 'readonly'=>true, 'tl_class'=>'w50'],
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),
 		'agentur' => array
@@ -182,7 +189,7 @@ $GLOBALS['TL_DCA']['tl_timetracker_setting'] = array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_timetracker_setting']['stundensatz'],
 			'exclude'                 => true,
-			'search'                  => true,
+			'filter'                  => true,
 			'inputType'               => 'text',
 			'eval'                    => ['maxlength'=>8, 'tl_class'=>'w50'],
 			'sql'                     => "varchar(8) NOT NULL default ''"
@@ -199,6 +206,10 @@ $GLOBALS['TL_DCA']['tl_timetracker_setting'] = array
 		),
 		'taskID' => array
 		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_timetracker_setting']['taskID'],
+			'exclude'                 => true,
+			'inputType'               => 'text',
+			'eval'                    => ['maxlength'=>8, 'readonly'=>true, 'tl_class'=>'w50'],
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),
 		'abrechnung' => array
@@ -249,6 +260,51 @@ class tl_timetracker_setting extends \Backend
 // log_message( __METHOD__ . ' - row=' . print_r( $row, 1 ), 'sl_debug.log' );
 
 		return '<span class="timetrack' . $class . '">' . $label . '</span>';
+	}
+
+
+	//---------------------------------------------------------------
+	// KundenID bzw. taskID beim ersten Speichern eintragen
+	//---------------------------------------------------------------
+	public function manageIds( $dc )
+	{
+		// Front end call
+		if( !$dc instanceof Contao\DataContainer ) {
+			return;
+		}
+
+		// Return if there is no active record (override all)
+		if( !$dc->activeRecord ) {
+			return;
+		}
+
+		// kundenID setzen
+		if( ($dc->activeRecord->type === 'kunde') && ($dc->activeRecord->kundenID == 0) ) {
+			// letzte kundenID ermitteln
+			$objLast = $this->Database->execute( "SELECT max(kundenID) AS lastid FROM tl_timetracker_setting" );
+
+			// nächste kundenID vergeben
+			$arrSet = [];
+			$arrSet['tstamp']   = time();
+			$arrSet['kundenID'] = $objLast->lastid + 1;
+			$this->Database->prepare( "UPDATE tl_timetracker_setting %s WHERE id=?" )
+						   ->set( $arrSet )
+						   ->execute( $dc->activeRecord->id );
+		}
+
+		// taskID setzen
+		if( ($dc->activeRecord->type === 'task') && ($dc->activeRecord->taskID == 0) ) {
+			// letzte taskID ermitteln
+			$objLast = $this->Database->execute("SELECT max(taskID) AS lastid FROM tl_timetracker_setting");
+
+			// nächste taskID vergeben
+			$arrSet = [];
+			$arrSet['tstamp'] = time();
+			$arrSet['taskID'] = $objLast->lastid + 1;
+			$this->Database->prepare( "UPDATE tl_timetracker_setting %s WHERE id=?" )
+						   ->set( $arrSet )
+						   ->execute( $dc->activeRecord->id );
+		}
 	}
 
 

@@ -17,8 +17,20 @@ namespace Softleister\Timetracker;
 class timetrackerTools extends \Backend
 {
 
-	public function getSettings( )
+	public function getSettings( $force = false )
 	{                                                                                                             
+		// Sind die Settings bereits geladen?
+		if( is_array($GLOBALS['TIMETRACKER']['KUNDEN']) && !force ) return true;
+
+		$db = \Database::getInstance();
+
+		$arrKunden = [];
+		$objKunden = $db->execute( "SELECT kundenID, kundenname, kundennr, agentur, stundensatz FROM tl_timetracker_setting WHERE type='kunde' ORDER BY kundenID");
+		while( $objKunden->next() ) {
+			$arrKunden[$objKunden->kundenID] = $objKunden->row();
+		}
+		$GLOBALS['TIMETRACKER']['KUNDEN'] = $arrKunden;
+
 		return true;	
     }
 	

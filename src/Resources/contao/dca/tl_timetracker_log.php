@@ -44,13 +44,20 @@ $GLOBALS['TL_DCA']['tl_timetracker_log'] = array
 		),
 		'global_operations' => array
 		(
+			'export' => array
+			(
+				'label'               => &$GLOBALS['TL_LANG']['tl_timetracker_log']['export'],
+				'href'                => 'key=export',
+				'class'               => 'header_xls_export',
+				'attributes'          => 'onclick="Backend.getScrollOffset();"'
+			),
 			'all' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['MSC']['all'],
 				'href'                => 'act=select',
 				'class'               => 'header_edit_all',
 				'attributes'          => 'onclick="Backend.getScrollOffset()" accesskey="e"'
-			)
+			),
 		),
 		'operations' => array
 		(
@@ -117,6 +124,9 @@ $GLOBALS['TL_DCA']['tl_timetracker_log'] = array
 			'flag'                    => 1,
 			'inputType'               => 'select',
 			'options_callback'        => array('tl_timetracker_log', 'getTimetrackerKunden'),
+			'load_callback'			  => array(
+											array( 'tl_timetracker_log', 'checkFilterKunde' )
+			  							 ),
 			'eval'                    => array('mandatory'=>true, 'chosen'=>true, 'tl_class'=>'clr w50', 'includeBlankOption'=>true),
 			'sql'                     => "varchar(80) NOT NULL default ''"
 		),
@@ -130,6 +140,9 @@ $GLOBALS['TL_DCA']['tl_timetracker_log'] = array
 			'flag'                    => 1,
 			'inputType'               => 'select',
 			'options_callback'        => array('tl_timetracker_log', 'getTimetrackerAufgaben'),
+			'load_callback'			  => array(
+											array( 'tl_timetracker_log', 'checkFilterAufgabe' )
+			  							 ),
 			'eval'                    => array('mandatory'=>true, 'chosen'=>true, 'tl_class'=>'w50', 'includeBlankOption'=>true),
 			'sql'                     => "varchar(11) NOT NULL default ''"
 		),
@@ -249,12 +262,51 @@ class tl_timetracker_log extends \Backend
 		return strtotime( '1970-01-01 ' . date('H:i:s', $value) );
 	}
 
+
+	//---------------------------------------------------------------
+	// Feld 'Kunde' vorbelegen mit dem Filterwert
+	//---------------------------------------------------------------
+	public function checkFilterKunde( $varValue )
+	{
+		// Do not change the value if it has been set already
+		if( ($varValue > 0) || Contao\Input::post('FORM_SUBMIT') == 'tl_timetracker_log' ) {
+			return $varValue;
+		}
+
+		/** @var Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface $objSessionBag */
+		$objSessionBag = Contao\System::getContainer()->get('session')->getBag('contao_backend');
+		$filter = $objSessionBag->get('filter');
+
+		// Return the current category
+		return $filter['tl_timetracker_log']['kunde'] ?? '';
+	}
+
+
+	//---------------------------------------------------------------
+	// Feld 'Aufgabe' vorbelegen mit dem Filterwert
+	//---------------------------------------------------------------
+	public function checkFilterAufgabe( $varValue )
+	{
+		// Do not change the value if it has been set already
+		if( ($varValue > 0) || Contao\Input::post('FORM_SUBMIT') == 'tl_timetracker_log' ) {
+			return $varValue;
+		}
+
+		/** @var Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface $objSessionBag */
+		$objSessionBag = Contao\System::getContainer()->get('session')->getBag('contao_backend');
+		$filter = $objSessionBag->get('filter');
+
+		// Return the current category
+		return $filter['tl_timetracker_log']['aufgabe'] ?? '';
+	}
+
+
 	//---------------------------------------------------------------
 	//  Liste der Kunden/Projekte zurückgeben
 	//---------------------------------------------------------------
 	public function getTimetrackerKunden( )
 	{
-        $objKunde = $this->Database->execute( "SELECT kundenID, kundenname, kundennr FROM tl_timetracker_setting WHERE type='kunde' ORDER BY kundenname" );
+        $objKunde = $this->Database->execute( "SELECT kundenID, kundenname, kundennr FROM tl_timetracker_setting WHERE type='kunde' AND active=1 ORDER BY kundenname" );
         
         $arrKunden = [];
         while( $objKunde->next() ) {
@@ -270,7 +322,7 @@ class tl_timetracker_log extends \Backend
 	//---------------------------------------------------------------
 	public function getTimetrackerAufgaben( )
 	{
-        $objAufg = $this->Database->execute( "SELECT taskID, aufgabe FROM tl_timetracker_setting WHERE type='task' ORDER BY aufgabe" );
+        $objAufg = $this->Database->execute( "SELECT taskID, aufgabe FROM tl_timetracker_setting WHERE type='task' AND active=1 ORDER BY aufgabe" );
         
         $arrAufgaben = [];
         while( $objAufg->next() ) {

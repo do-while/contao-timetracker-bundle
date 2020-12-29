@@ -21,6 +21,7 @@ array_insert($GLOBALS['BE_MOD'], 0, array
         'timetrackerZeiten' => array
         (
             'tables'      => array('tl_timetracker_log'),
+            'export'      => array('\Softleister\Timetracker\LogExport', 'exportLog')
         ),
         'timetrackerSetting' => array
         (
