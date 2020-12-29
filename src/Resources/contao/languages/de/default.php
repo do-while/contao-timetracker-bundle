@@ -17,7 +17,7 @@ $GLOBALS['TL_LANG']['CTE']['timetracker'] = array('timetracker', 'timetracker');
 // Backend-Module
 $GLOBALS['TL_LANG']['MOD']['timetracker']        = 'timetracker';
 $GLOBALS['TL_LANG']['MOD']['timetrackerZeiten']  = array('Zeiten', 'Eingabe der Projektzeiten');
-$GLOBALS['TL_LANG']['MOD']['timetrackerSetting'] = array('Einstellungen', 'Einstellungen der timetracker - V' . $GLOBALS['timetracker']['version'] );
+$GLOBALS['TL_LANG']['MOD']['timetrackerSetting'] = array('Einstellungen', 'Einstellungen der timetracker - V' . $GLOBALS['TIMETRACKER']['VERSION'] );
 
 $GLOBALS['TL_LANG']['FMD']['timetracker']                 = 'timetracker';
 $GLOBALS['TL_LANG']['FMD']['timetrackerThemenliste']      = array('Themenliste', 'Liste der Themen für Mandanten und Referenzgeber');
