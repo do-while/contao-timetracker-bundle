@@ -22,6 +22,8 @@ $GLOBALS['TL_LANG']['tl_timetracker_setting']['agentur']      = ['Agentur', 'Hie
 $GLOBALS['TL_LANG']['tl_timetracker_setting']['stundensatz']  = ['Stundensatz', 'Der Netto-Stundensatz in EUR für die Berechnung auf dem Stundennachweis.'];
 $GLOBALS['TL_LANG']['tl_timetracker_setting']['aufgabe']      = ['Aufgabe/Dienstleistung', 'Bezeichnung der Aufgabe oder Dienstleistung'];
 $GLOBALS['TL_LANG']['tl_timetracker_setting']['abrechnung']   = ['nicht abrechnen!', 'Diese Aufgabe wird nicht abgerechnet, z.B. bei Rechnungen oder Infoeinträgen'];
+$GLOBALS['TL_LANG']['tl_timetracker_setting']['calcstop']     = ['Abrechnungsstop', 'Der Export des Zeitnachweises stoppt bei diesem Eintrag.'];
+$GLOBALS['TL_LANG']['tl_timetracker_setting']['nolist']       = ['In der Abrechnung nicht auflisten', 'Den Eintrag nicht im Zeitnachweises aufnehmen.'];
 $GLOBALS['TL_LANG']['tl_timetracker_setting']['kundenID']     = ['interne kundenID', 'Die ID wird für die Selectauswahlen verwendet'];
 $GLOBALS['TL_LANG']['tl_timetracker_setting']['taskID']       = ['interne taskID', 'Die ID wird für die Selectauswahlen verwendet'];
 

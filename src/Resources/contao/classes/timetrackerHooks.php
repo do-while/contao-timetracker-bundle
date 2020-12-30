@@ -9,7 +9,7 @@
  * @licence    LGPL
  */
 
-namespace Softleister\Kanzlei;
+namespace Softleister\Timetracker;
 
 use Softleister\Timetracker\timetrackerTools;
 

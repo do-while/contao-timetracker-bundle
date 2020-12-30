@@ -15,6 +15,8 @@ use Softleister\Timetracker\timetrackerTools;
 
 //-----------------------------------------------------------------
 //  importExport:    Import- und Exportklasse
+//
+//  Import aus "Anuko Time Tracker" https://www.anuko.com/time-tracker/index.htm
 //-----------------------------------------------------------------
 class importExport extends \BackendModule
 {

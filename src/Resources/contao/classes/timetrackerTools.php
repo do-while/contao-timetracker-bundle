@@ -28,12 +28,23 @@ class timetrackerTools extends \Backend
 		// Globale Arrays auffbauen
 		$db = \Database::getInstance();
 
+		// Kunden-Array
 		$arrKunden = [];
 		$objKunden = $db->execute( "SELECT kundenID, kundenname, kundennr, agentur, stundensatz FROM tl_timetracker_setting WHERE type='kunde' ORDER BY kundenID");
 		while( $objKunden->next() ) {
 			$arrKunden[$objKunden->kundenID] = $objKunden->row();
 		}
 		$GLOBALS['TIMETRACKER']['KUNDEN'] = $arrKunden;
+
+		// Stop-Code-Array
+		$arrCalcStop = $arrNoList = [];
+		$objStop = $db->execute( "SELECT taskID, calcstop, nolist FROM tl_timetracker_setting WHERE type='task' AND active=1 ORDER BY taskID");
+		while( $objStop->next() ) {
+			if( $objStop->calcstop ) $arrCalcStop[] = $objStop->taskID;
+			if( $objStop->nolist ) $arrNoList[] = $objStop->taskID;
+		}
+		$GLOBALS['TIMETRACKER']['CALCSTOP'] = $arrCalcStop;
+		$GLOBALS['TIMETRACKER']['NOLIST'] = $arrNoList;
 
 		return true;	
     }

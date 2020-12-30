@@ -19,6 +19,7 @@ $GLOBALS['TL_LANG']['tl_timetracker_log']['startzeit']	  = array('Startzeit', 'U
 $GLOBALS['TL_LANG']['tl_timetracker_log']['dauer']        = array('Dauer', 'Abzurechnende Arbeitszeit');
 $GLOBALS['TL_LANG']['tl_timetracker_log']['beschreibung'] = array('Bearbeitung', 'Dateils zur Bearbeitung.');
 $GLOBALS['TL_LANG']['tl_timetracker_log']['noinvoice']    = array('nicht abrechnen', 'Die Aufgabe wird nicht in Rechnung gestellt.');
+$GLOBALS['TL_LANG']['tl_timetracker_log']['nostop']       = array('Abrechnungsstop nicht beachten', 'Die Aufrechnung der Zeiten soll durch diesen Eintrag nicht beendet werden.');
 $GLOBALS['TL_LANG']['tl_timetracker_log']['username']     = array('Backend-User', 'Backend-User, der den Eintrag vorgenommen hat.');
 $GLOBALS['TL_LANG']['tl_timetracker_log']['member']       = array('Frontend-Member', 'Frontend-Member, der den Eintrag vorgenommen hat.');
 

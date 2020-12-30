@@ -94,7 +94,7 @@ $GLOBALS['TL_DCA']['tl_timetracker_log'] = array
 	(
 		'default'				      => '{kunde_legend},kunde,aufgabe;'
 										.'{zeit_legend},datum,dauer,startzeit;'
-										.'{aufgabe_legend},beschreibung,noinvoice;'
+										.'{aufgabe_legend},beschreibung,noinvoice,nostop;'
 										.'{user_legend},username,member;'
 	),
 
@@ -194,6 +194,15 @@ $GLOBALS['TL_DCA']['tl_timetracker_log'] = array
         'noinvoice' => array
         (
 			'label'                   => &$GLOBALS['TL_LANG']['tl_timetracker_log']['noinvoice'],
+			'exclude'                 => true,
+			'filter'                  => true,
+			'inputType'               => 'checkbox',
+			'eval'                    => array('doNotCopy'=>true, 'tl_class'=>'m12 w50'),
+			'sql'                     => "char(1) NOT NULL default ''"
+        ),
+        'nostop' => array
+        (
+			'label'                   => &$GLOBALS['TL_LANG']['tl_timetracker_log']['nostop'],
 			'exclude'                 => true,
 			'filter'                  => true,
 			'inputType'               => 'checkbox',

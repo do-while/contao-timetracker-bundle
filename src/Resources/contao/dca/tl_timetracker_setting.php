@@ -96,7 +96,7 @@ $GLOBALS['TL_DCA']['tl_timetracker_setting'] = array
 										.'{detail_legend},beschreibung;'
 										.'{activate_legend},active,kundenID',
 		'task'						  => '{type_legend},type;'
-										.'{task_legend},aufgabe,abrechnung;'
+										.'{task_legend},aufgabe,abrechnung,calcstop,nolist;'
 										.'{detail_legend},beschreibung;'
 										.'{activate_legend},active,taskID'
 	),
@@ -221,6 +221,24 @@ $GLOBALS['TL_DCA']['tl_timetracker_setting'] = array
 			'eval'                    => ['tl_class'=>'m12 w50'],
 			'sql'                     => "char(1) NOT NULL default ''"
 		),
+		'calcstop' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_timetracker_setting']['calcstop'],
+			'exclude'                 => true,
+			'filter'                  => true,
+			'inputType'               => 'checkbox',
+			'eval'                    => ['tl_class'=>'m12 w50'],
+			'sql'                     => "char(1) NOT NULL default ''"
+		),
+		'nolist' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_timetracker_setting']['nolist'],
+			'exclude'                 => true,
+			'filter'                  => true,
+			'inputType'               => 'checkbox',
+			'eval'                    => ['tl_class'=>'m12 w50'],
+			'sql'                     => "char(1) NOT NULL default ''"
+		),
 //--------
 	)
 );
@@ -240,12 +258,7 @@ class tl_timetracker_setting extends \Backend
     
     
 	//---------------------------------------------------------------
-	//  Add an image to each page in the tree
-	// 
-	//  @param array  $row
-	//  @param string $label
-	// 
-	//  @return string
+	//  Label für Einstellungen
     //---------------------------------------------------------------
 	public function getLabel( $row, $label )
 	{
