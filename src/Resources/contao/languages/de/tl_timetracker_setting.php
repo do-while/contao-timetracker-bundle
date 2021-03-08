@@ -3,7 +3,7 @@
 /**
  * Extension for Contao 4
  *
- * @copyright  Softleister 2020
+ * @copyright  Softleister 2020-2021
  * @author     Softleister <info@softleister.de>
  * @package    contao-timetracker-bundle
  * @licence    LGPL
@@ -26,6 +26,7 @@ $GLOBALS['TL_LANG']['tl_timetracker_setting']['calcstop']     = ['Abrechnungssto
 $GLOBALS['TL_LANG']['tl_timetracker_setting']['nolist']       = ['In der Abrechnung nicht auflisten', 'Den Eintrag nicht im Zeitnachweises aufnehmen.'];
 $GLOBALS['TL_LANG']['tl_timetracker_setting']['kundenID']     = ['interne kundenID', 'Die ID wird für die Selectauswahlen verwendet'];
 $GLOBALS['TL_LANG']['tl_timetracker_setting']['taskID']       = ['interne taskID', 'Die ID wird für die Selectauswahlen verwendet'];
+$GLOBALS['TL_LANG']['tl_timetracker_setting']['defaultid']    = ['Voreinstellung', 'Diese Aufgabe wird als Voreinstellung gesetzt'];
 
 
 /**

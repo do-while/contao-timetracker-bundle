@@ -3,7 +3,7 @@
 /**
  * Extension for Contao 4
  *
- * @copyright  Softleister 2020
+ * @copyright  Softleister 2020-2021
  * @author     Softleister <info@softleister.de>
  * @package    contao-timetracker-bundle
  * @licence    LGPL
@@ -20,14 +20,14 @@ use PhpOffice\PhpSpreadsheet\Reader\IReadFilter;
 //-----------------------------------------------------------------
 //  LogExport:    Exportklasse
 //-----------------------------------------------------------------
-class LogExport extends \Backend
+class LogExport extends \Contao\Backend
 {
     //-----------------------------------------------------------------
     //  Function compile
     //-----------------------------------------------------------------
     public function exportLog()
     {
-		if( \Input::get('key') != 'export' ) {
+		if( \Contao\Input::get('key') != 'export' ) {
 			return '';
         }
         
@@ -66,7 +66,7 @@ class LogExport extends \Backend
         $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_LANDSCAPE);
         $sheet->getPageSetup()->setPaperSize(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_A4);
         $sheet->getPageSetup()->setRowsToRepeatAtTopByStartAndEnd(1, 4);
-        $sheet->getHeaderFooter()->setOddFooter('&L&B' . $spreadsheet->getProperties()->getTitle() . '&C' . \Environment::get('host') . '&RSeite &P von &N');
+        $sheet->getHeaderFooter()->setOddFooter('&L&B' . $spreadsheet->getProperties()->getTitle() . '&C' . \Contao\Environment::get('host') . '&RSeite &P von &N');
 
         // Überschriften
         $sheet->setCellValue( 'A1', $GLOBALS['TIMETRACKER']['KUNDEN'][$kundeID]['kundenname'] );
@@ -87,12 +87,12 @@ class LogExport extends \Backend
             if( in_array( $objLog->aufgabe, $GLOBALS['TIMETRACKER']['CALCSTOP'] ) && ($objLog->nostop != 1) ) break;    // bei ## Abrechnung ## beenden
             if( in_array( $objLog->aufgabe, $GLOBALS['TIMETRACKER']['NOLIST'] ) ) continue;                             // Eintrag nicht listen
 
-            $arrDauer = \StringUtil::trimsplit( ':', $objLog->dauer );
+            $arrDauer = \Contao\StringUtil::trimsplit( ':', $objLog->dauer );
             $dauer = ($arrDauer[1] * 60) + ($arrDauer[0] * 60 * 60);                        // Dauer in Sekunden
             $summe['gesamt'] += $dauer;
             if( $objLog->noinvoice != '1' ) $summe['berechnet'] += $dauer;
 
-            $content = strip_tags( $objLog->beschreibung );
+            $content = str_replace( '<br>', "\n", strip_tags( $objLog->beschreibung, '<br>' ) );
 
             $sheet->setCellValue( 'A' . $line, date('d.m.Y', $objLog->datum) );
             $sheet->setCellValue( 'B' . $line, sprintf( '%02d:%02d', floor($dauer/3600), round(($dauer/60)%60) ) );

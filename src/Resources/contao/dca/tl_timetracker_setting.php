@@ -3,7 +3,7 @@
 /**
  * Extension for Contao 4
  *
- * @copyright  Softleister 2020
+ * @copyright  Softleister 2020-2021
  * @author     Softleister <info@softleister.de>
  * @package    contao-timetracker-bundle
  * @licence    LGPL
@@ -96,7 +96,7 @@ $GLOBALS['TL_DCA']['tl_timetracker_setting'] = array
 										.'{detail_legend},beschreibung;'
 										.'{activate_legend},active,kundenID',
 		'task'						  => '{type_legend},type;'
-										.'{task_legend},aufgabe,abrechnung,calcstop,nolist;'
+										.'{task_legend},aufgabe,abrechnung,calcstop,nolist,defaultid;'
 										.'{detail_legend},beschreibung;'
 										.'{activate_legend},active,taskID'
 	),
@@ -239,13 +239,22 @@ $GLOBALS['TL_DCA']['tl_timetracker_setting'] = array
 			'eval'                    => ['tl_class'=>'m12 w50'],
 			'sql'                     => "char(1) NOT NULL default ''"
 		),
+		'defaultid' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_timetracker_setting']['defaultid'],
+			'exclude'                 => true,
+			'filter'                  => true,
+			'inputType'               => 'checkbox',
+			'eval'                    => ['tl_class'=>'m12 w50'],
+			'sql'                     => "char(1) NOT NULL default ''"
+		),
 //--------
 	)
 );
 
 
 //--- Klasse tl_timetracker_setting ---
-class tl_timetracker_setting extends \Backend
+class tl_timetracker_setting extends \Contao\Backend
 {
 	/**
 	 * Import the back end user object
@@ -266,7 +275,7 @@ class tl_timetracker_setting extends \Backend
 			$label = '<span>Kunde/Projekt:</span><span>' . $row['kundenname'] . ' / ' . $row['agentur'] . ' (' . $row['kundennr'] . ')</span>';
 		}
 		else {
-			$label = '<span>Aufgabe:</span><span>' . $row['aufgabe'] . '</span>';
+			$label = '<span>Aufgabe:</span><span style="display:inline-block;width:400px">' . $row['aufgabe'] . '</span>' . ($row['defaultid'] ? '<span style="color:#e00">default</span>' : '');
 		}
 		$class = $row['active'] === '1' ? ' active' : ' inactive';
 

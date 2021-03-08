@@ -3,7 +3,7 @@
 /**
  * Extension for Contao 4
  *
- * @copyright  Softleister 2020
+ * @copyright  Softleister 2020-2021
  * @author     Softleister <info@softleister.de>
  * @package    contao-timetracker-bundle
  * @licence    LGPL
@@ -137,6 +137,7 @@ $GLOBALS['TL_DCA']['tl_timetracker_log'] = array
 			'filter'                  => true,
 			'sorting'                 => true,
 			'search'                  => true,
+			'default'				  => $GLOBALS['TIMETRACKER']['DEFAULT'],
 			'flag'                    => 1,
 			'inputType'               => 'select',
 			'options_callback'        => array('tl_timetracker_log', 'getTimetrackerAufgaben'),
@@ -238,7 +239,7 @@ $GLOBALS['TL_DCA']['tl_timetracker_log'] = array
 
 
 //--- Klasse tl_timetracker_log ---
-class tl_timetracker_log extends \Backend
+class tl_timetracker_log extends \Contao\Backend
 {
 	protected $arrKunden = [];
 	protected $arrAufgaben = [];
