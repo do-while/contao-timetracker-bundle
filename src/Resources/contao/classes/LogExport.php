@@ -27,17 +27,17 @@ class LogExport extends \Contao\Backend
     //-----------------------------------------------------------------
     public function exportLog()
     {
-		if( \Contao\Input::get('key') != 'export' ) {
-			return '';
+        if( \Contao\Input::get('key') != 'export' ) {
+            return '';
         }
         
         timetrackerTools::getSettings( true );          // Settings laden
 
-		/** @var Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface $objSessionBag */
-		$objSessionBag = \Contao\System::getContainer()->get('session')->getBag('contao_backend');
-		$filter = $objSessionBag->get('filter');
+        /** @var Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface $objSessionBag */
+        $objSessionBag = \Contao\System::getContainer()->get('session')->getBag('contao_backend');
+        $filter = $objSessionBag->get('filter');
 
-		// Return the current category
+        // Return the current category
         $kundeID = $filter['tl_timetracker_log']['kunde'] ?? '';
         if( $kundeID == '' ) return 'Kein Kunde ausgewählt.';
 
@@ -139,7 +139,83 @@ class LogExport extends \Contao\Backend
 
 
     //-----------------------------------------------------------------
+    //  Offene Zeiten, die noch nicht abgerechnet sind auflisten
+    //-----------------------------------------------------------------
+    public function openTimes()
+    {
+        if( \Contao\Input::get('key') != 'opentimes' ) {
+            return '';
+        }
+        
+        timetrackerTools::getSettings( true );          // Settings laden
+
+        //  | Kunde | Kundennr | Gesamtzeit | seit letzter Rechung | noch abzurechnen | 
+        $result = '<table class="openTab">'
+                . '<thead><tr>'
+                . '<th>Kunde</th>'
+                . '<th>Kundennr.</th>'
+                . '<th>Gesamtzeit</th>'
+                . '<th>seit letzter Rechnung</th>'
+                . '<th>noch abzurechnen</th>'
+                . '</tr></thead>'
+                . '<tbody>';
+
+        $objKunde = $this->Database->prepare( "SELECT * FROM tl_timetracker_setting WHERE type=? AND active=1 AND hidelist<>1 ORDER BY kundenname")
+                                   ->execute( 'kunde' );
+        if( $objKunde->numRows < 1 ) return 'Keine Kunden gefunden.';
+
+        while( $objKunde->next() ) {
+            $summe = ['gesamt' => 0, 'lastRE' => 0, 'berechnet' => 0 ];
+            $link = 'contao?do=timetrackerZeiten&amp;id=' . $objKunde->kundenID . '&amp;ref=' . \Contao\Input::get('ref');
+            $result .= '<tr><td><a href="' . $link . '" title="Zeitabrechnung ' . $objKunde->kundenname . ' aufrufen">' . $objKunde->kundenname . '</a></td><td>' . $objKunde->kundennr . '</td>';
+
+            $objLog = $this->Database->prepare( "SELECT * FROM tl_timetracker_log WHERE kunde=? ORDER BY datum DESC")
+                                     ->limit( 1000 )
+                                     ->execute( $objKunde->kundenID );
+            
+            if( $objLog->numRows > 0 ) {                                                            // Alle Zeiten durchrechnen
+                $restop = false;
+                while( $objLog->next() ) {
+                    if( in_array( $objLog->aufgabe, $GLOBALS['TIMETRACKER']['CALCSTOP'] ) && ($objLog->nostop != 1) ) $restop = true;   // bei ## Abrechnung ## nur noch Gesamtzeit weiterrechnen
+                    if( in_array( $objLog->aufgabe, $GLOBALS['TIMETRACKER']['NOLIST'] ) 
+                      || in_array( $objLog->aufgabe, $GLOBALS['TIMETRACKER']['CALCSTOP'] ) ) continue;                                  // Eintrag nicht listen
+
+                    $arrDauer = \Contao\StringUtil::trimsplit( ':', $objLog->dauer );
+                    $dauer = ($arrDauer[1] * 60) + ($arrDauer[0] * 60 * 60);                        // Dauer in Sekunden
+                    $summe['gesamt'] += $dauer;                                                     // Gesamtzeit
+                    if( !$restop ) {
+                        $summe['lastRE'] += $dauer;                                                 // Zeit seit letzter Rechnung
+                        if( $objLog->noinvoice != '1' ) $summe['berechnet'] += $dauer;              // noch zu berechnende Zeit
+                    }
+                }
+                $class = $summe['berechnet'] >= 3600 ? 'rechnung' : 'peanuts';
+                $result .= '<td>' . sprintf( '%02d:%02d', floor($summe['gesamt']/3600), round(($summe['gesamt']/60)%60) ) . '</td>'
+                         . '<td>' . sprintf( '%02d:%02d', floor($summe['lastRE']/3600), round(($summe['lastRE']/60)%60) ) . '</td>'
+                         . '<td class="' . $class . '">' . ($summe['berechnet'] < 1 ? '-' : sprintf( '%02d:%02d', floor($summe['berechnet']/3600), round(($summe['berechnet']/60)%60) ) ) . '</td>';
+            }
+            else $result .= '<td colspan="3">Keine Zeiten eingetragen.</td>';
+
+            $result .= '</tr>';
+        }
+
+        $result .= '</tbody>'
+                 . '</table>';
+
+        return '<div class="opentimesTab">' . $result . '</div>';
+    }
+
+
+//-----------------------------------------------------------------
 }
 
 
 // log_message( __METHOD__ . ' - objKunde=' . print_r( $objKunde->row(), 1 ), 'sl_debug.log' );
+
+//         /** @var Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface $objSessionBag */
+//         $objSessionBag = \Contao\System::getContainer()->get('session')->getBag('contao_backend');
+//         $filter = $objSessionBag->get('filter');
+// log_message( __METHOD__ . ' - $filter=' . print_r( $filter, 1 ), 'sl_debug.log' );
+
+//         // Return the current category
+//         $kundeID = $filter['tl_timetracker_log']['kunde'] ?? '';
+//         if( $kundeID == '' ) return 'Kein Kunde ausgewählt.';

@@ -94,7 +94,7 @@ $GLOBALS['TL_DCA']['tl_timetracker_setting'] = array
 		'kunde'						  => '{type_legend},type;'
 										.'{kunden_legend},kundenname,kundennr,agentur,stundensatz;'
 										.'{detail_legend},beschreibung;'
-										.'{activate_legend},active,kundenID',
+										.'{activate_legend},active,kundenID,hidelist',
 		'task'						  => '{type_legend},type;'
 										.'{task_legend},aufgabe,abrechnung,calcstop,nolist,defaultid;'
 										.'{detail_legend},beschreibung;'
@@ -119,7 +119,6 @@ $GLOBALS['TL_DCA']['tl_timetracker_setting'] = array
 //--------
 		'type' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_timetracker_setting']['type'],
 			'default'                 => 'text',
 			'exclude'                 => true,
 			'filter'                  => true,
@@ -131,7 +130,6 @@ $GLOBALS['TL_DCA']['tl_timetracker_setting'] = array
 		),
 		'beschreibung' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_timetracker_setting']['beschreibung'],
 			'exclude'                 => true,
 			'search'                  => true,
 			'inputType'               => 'textarea',
@@ -141,7 +139,6 @@ $GLOBALS['TL_DCA']['tl_timetracker_setting'] = array
 		),
 		'active' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_content']['active'],
 			'default'				  => '1',
 			'exclude'                 => true,
 			'filter'                  => true,
@@ -152,7 +149,6 @@ $GLOBALS['TL_DCA']['tl_timetracker_setting'] = array
 //--- Kunde/Projekt ---
 		'kundenname' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_timetracker_setting']['kundenname'],
 			'exclude'                 => true,
 			'search'                  => true,
 			'inputType'               => 'text',
@@ -161,7 +157,6 @@ $GLOBALS['TL_DCA']['tl_timetracker_setting'] = array
 		),
 		'kundennr' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_timetracker_setting']['kundennr'],
 			'exclude'                 => true,
 			'search'                  => true,
 			'inputType'               => 'text',
@@ -170,7 +165,6 @@ $GLOBALS['TL_DCA']['tl_timetracker_setting'] = array
 		),
 		'kundenID' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_timetracker_setting']['kundenID'],
 			'exclude'                 => true,
 			'inputType'               => 'text',
 			'eval'                    => ['maxlength'=>8, 'readonly'=>true, 'tl_class'=>'w50'],
@@ -178,7 +172,6 @@ $GLOBALS['TL_DCA']['tl_timetracker_setting'] = array
 		),
 		'agentur' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_timetracker_setting']['agentur'],
 			'exclude'                 => true,
 			'search'                  => true,
 			'inputType'               => 'text',
@@ -187,7 +180,6 @@ $GLOBALS['TL_DCA']['tl_timetracker_setting'] = array
 		),
 		'stundensatz' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_timetracker_setting']['stundensatz'],
 			'exclude'                 => true,
 			'filter'                  => true,
 			'inputType'               => 'text',
@@ -197,7 +189,6 @@ $GLOBALS['TL_DCA']['tl_timetracker_setting'] = array
 //--- Aufgabe/Dienstleistung ---
 		'aufgabe' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_timetracker_setting']['aufgabe'],
 			'exclude'                 => true,
 			'search'                  => true,
 			'inputType'               => 'text',
@@ -206,7 +197,6 @@ $GLOBALS['TL_DCA']['tl_timetracker_setting'] = array
 		),
 		'taskID' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_timetracker_setting']['taskID'],
 			'exclude'                 => true,
 			'inputType'               => 'text',
 			'eval'                    => ['maxlength'=>8, 'readonly'=>true, 'tl_class'=>'w50'],
@@ -214,7 +204,6 @@ $GLOBALS['TL_DCA']['tl_timetracker_setting'] = array
 		),
 		'abrechnung' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_timetracker_setting']['abrechnung'],
 			'exclude'                 => true,
 			'filter'                  => true,
 			'inputType'               => 'checkbox',
@@ -223,7 +212,6 @@ $GLOBALS['TL_DCA']['tl_timetracker_setting'] = array
 		),
 		'calcstop' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_timetracker_setting']['calcstop'],
 			'exclude'                 => true,
 			'filter'                  => true,
 			'inputType'               => 'checkbox',
@@ -232,7 +220,6 @@ $GLOBALS['TL_DCA']['tl_timetracker_setting'] = array
 		),
 		'nolist' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_timetracker_setting']['nolist'],
 			'exclude'                 => true,
 			'filter'                  => true,
 			'inputType'               => 'checkbox',
@@ -241,7 +228,14 @@ $GLOBALS['TL_DCA']['tl_timetracker_setting'] = array
 		),
 		'defaultid' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_timetracker_setting']['defaultid'],
+			'exclude'                 => true,
+			'filter'                  => true,
+			'inputType'               => 'checkbox',
+			'eval'                    => ['tl_class'=>'m12 w50'],
+			'sql'                     => "char(1) NOT NULL default ''"
+		),
+		'hidelist' => array
+		(
 			'exclude'                 => true,
 			'filter'                  => true,
 			'inputType'               => 'checkbox',

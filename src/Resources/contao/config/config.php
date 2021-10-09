@@ -21,16 +21,13 @@ array_insert($GLOBALS['BE_MOD'], 0, array
         'timetrackerZeiten' => array
         (
             'tables'      => array('tl_timetracker_log'),
-            'export'      => array('\Softleister\Timetracker\LogExport', 'exportLog')
+            'export'      => array('\Softleister\Timetracker\LogExport', 'exportLog'),
+            'opentimes'   => array('\Softleister\Timetracker\LogExport', 'openTimes')
         ),
         'timetrackerSetting' => array
         (
             'tables'      => array('tl_timetracker_setting'),
         ),
-        // 'timetrackerImportExport' => array
-        // (
-        //     'callback'   => 'Softleister\Timetracker\importExport',
-        // ),
     )
 ));
 

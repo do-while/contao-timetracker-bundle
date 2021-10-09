@@ -42,3 +42,28 @@
     background-repeat: no-repeat;
     margin-left: 15px;
 }
+.header_opentimes {
+    background-image: url(/system/themes/flexible/icons/show.svg);
+    padding: 3px 0 3px 21px;
+    background-position: left center;
+    background-repeat: no-repeat;
+    margin-left: 15px;
+}
+
+.opentimesTab {
+    margin: 24px;
+}
+.opentimesTab td,
+.opentimesTab th {
+    padding: 8px 20px;
+    text-align: right;
+}
+.opentimesTab th {
+    border-bottom: 2px solid #aaa;
+}
+.opentimesTab tr:nth-child(even) td {
+    background: #eee;
+}
+.opentimesTab .rechnung {
+    font-weight: bold;
+}

@@ -43,4 +43,5 @@ $GLOBALS['TL_LANG']['tl_timetracker_log']['delete'] = array('Eintrag löschen', 
 $GLOBALS['TL_LANG']['tl_timetracker_log']['toggle'] = array('Eintrag aktivieren/deaktivieren', 'Eintrag ID %s aktivieren/deaktivieren');
 $GLOBALS['TL_LANG']['tl_timetracker_log']['show']   = array('Eintragsdetails', 'Details zum Eintrag ID %s anzeigen');
 
-$GLOBALS['TL_LANG']['tl_timetracker_log']['export'] = array('Exportieren', 'Exportieren der Zeitlisten');
+$GLOBALS['TL_LANG']['tl_timetracker_log']['export']    = array('Exportieren', 'Exportieren der Zeitlisten');
+$GLOBALS['TL_LANG']['tl_timetracker_log']['opentimes'] = array('Offene Zeiten', 'Nicht abgerechnete Zeiten auflisten');

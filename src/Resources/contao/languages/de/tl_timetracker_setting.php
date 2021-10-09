@@ -27,6 +27,7 @@ $GLOBALS['TL_LANG']['tl_timetracker_setting']['nolist']       = ['In der Abrechn
 $GLOBALS['TL_LANG']['tl_timetracker_setting']['kundenID']     = ['interne kundenID', 'Die ID wird für die Selectauswahlen verwendet'];
 $GLOBALS['TL_LANG']['tl_timetracker_setting']['taskID']       = ['interne taskID', 'Die ID wird für die Selectauswahlen verwendet'];
 $GLOBALS['TL_LANG']['tl_timetracker_setting']['defaultid']    = ['Voreinstellung', 'Diese Aufgabe wird als Voreinstellung gesetzt'];
+$GLOBALS['TL_LANG']['tl_timetracker_setting']['hidelist']     = ['Nicht in der Übersicht aufführen', 'Diesen Kunden nicht in der Übersicht auflisten.'];
 
 
 /**
