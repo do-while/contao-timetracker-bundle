@@ -3,11 +3,17 @@
 /**
  * Extension for Contao 4
  *
- * @copyright  Softleister 2020-2021
+ * @copyright  Softleister 2020-2022
  * @author     Softleister <info@softleister.de>
  * @package    contao-timetracker-bundle
  * @licence    LGPL
 */
+
+use Contao\Backend;
+use Contao\BackendUser;
+use Contao\Input;
+use Contao\System;
+
 
 $GLOBALS['TL_DCA']['tl_timetracker_log'] = array
 (
@@ -43,7 +49,7 @@ $GLOBALS['TL_DCA']['tl_timetracker_log'] = array
         'label' => array
         (
             'fields'                  => array('datum', 'dauer', 'kunde', 'aufgabe'),
-            'format'				  => '%s / %s / %s / %s',
+            'format'                  => '%s / %s / %s / %s',
             'label_callback'          => array('tl_timetracker_log', 'logLabel')
         ),
         'global_operations' => array
@@ -99,7 +105,7 @@ $GLOBALS['TL_DCA']['tl_timetracker_log'] = array
     // Palettes
     'palettes' => array
     (
-        'default'				      => '{kunde_legend},kunde,aufgabe;'
+        'default'                     => '{kunde_legend},kunde,aufgabe;'
                                         .'{zeit_legend},datum,dauer,startzeit;'
                                         .'{aufgabe_legend},beschreibung,noinvoice,nostop;'
                                         .'{user_legend},username,member;'
@@ -131,7 +137,7 @@ $GLOBALS['TL_DCA']['tl_timetracker_log'] = array
             'flag'                    => 1,
             'inputType'               => 'select',
             'options_callback'        => array('tl_timetracker_log', 'getTimetrackerKunden'),
-            'load_callback'			  => array(
+            'load_callback'           => array(
                                             array( 'tl_timetracker_log', 'checkFilterKunde' )
                                            ),
             'eval'                    => array('mandatory'=>true, 'chosen'=>true, 'tl_class'=>'clr w50', 'includeBlankOption'=>true),
@@ -144,11 +150,11 @@ $GLOBALS['TL_DCA']['tl_timetracker_log'] = array
             'filter'                  => true,
             'sorting'                 => true,
             'search'                  => true,
-            'default'				  => $GLOBALS['TIMETRACKER']['DEFAULT'],
+            'default'                 => $GLOBALS['TIMETRACKER']['DEFAULT'],
             'flag'                    => 1,
             'inputType'               => 'select',
             'options_callback'        => array('tl_timetracker_log', 'getTimetrackerAufgaben'),
-            'load_callback'			  => array(
+            'load_callback'           => array(
                                             array( 'tl_timetracker_log', 'checkFilterAufgabe' )
                                            ),
             'eval'                    => array('mandatory'=>true, 'chosen'=>true, 'tl_class'=>'w50', 'includeBlankOption'=>true),
@@ -165,7 +171,7 @@ $GLOBALS['TL_DCA']['tl_timetracker_log'] = array
             'flag'                    => 8,
             'inputType'               => 'text',
             'eval'                    => array('rgxp'=>'date', 'datepicker'=>true, 'tl_class'=>'w50 wizard'),
-            'load_callback' 		  => array (
+            'load_callback'           => array (
                                             array('tl_timetracker_log', 'loadDate')
                                          ),
             'sql'                     => "varchar(11) NOT NULL default ''"
@@ -184,7 +190,7 @@ $GLOBALS['TL_DCA']['tl_timetracker_log'] = array
             'exclude'                 => true,
             'inputType'               => 'text',
             'eval'                    => array('rgxp'=>'time', 'doNotCopy'=>true, 'tl_class'=>'w50'),
-            'load_callback'			  => array (
+            'load_callback'           => array (
                                             array('tl_timetracker_log', 'loadTime')
                                          ),
             'sql'                     => "varchar(6) NOT NULL default ''"
@@ -221,7 +227,7 @@ $GLOBALS['TL_DCA']['tl_timetracker_log'] = array
         'username' => array
         (
             'label'                   => &$GLOBALS['TL_LANG']['tl_timetracker_log']['username'],
-            'default'                 => Contao\BackendUser::getInstance()->id,
+            'default'                 => BackendUser::getInstance()->id,
             'exclude'                 => true,
             'filter'                  => true,
             'inputType'               => 'select',
@@ -246,7 +252,7 @@ $GLOBALS['TL_DCA']['tl_timetracker_log'] = array
 
 
 //--- Klasse tl_timetracker_log ---
-class tl_timetracker_log extends \Contao\Backend
+class tl_timetracker_log extends Backend
 {
     protected $arrKunden = [];
     protected $arrAufgaben = [];
@@ -269,7 +275,7 @@ class tl_timetracker_log extends \Contao\Backend
     //---------------------------------------------------------------
     public function setKundenID()
     {
-        if( empty( \Contao\Input::get('id') ) ) return;           // keine Einschränkung bei direktem Aufruf
+        if( empty( Input::get('id') ) ) return;           // keine Einschränkung bei direktem Aufruf
 
         $GLOBALS['TL_DCA']['tl_timetracker_log']['list']['sorting']['filter'][] = array( 'kunde=?', \Contao\Input::get('id') );
     }
@@ -280,6 +286,8 @@ class tl_timetracker_log extends \Contao\Backend
     //---------------------------------------------------------------
     public function loadDate( $value )
     {
+        if( empty( $value ) ) $value = time();
+
         return strtotime( date('Y-m-d', $value) . ' 00:00:00' );
     }
 
@@ -288,6 +296,8 @@ class tl_timetracker_log extends \Contao\Backend
     //---------------------------------------------------------------
     public function loadTime( $value )
     {
+        if( empty( $value ) ) return '';
+
         return strtotime( '1970-01-01 ' . date('H:i:s', $value) );
     }
 
@@ -298,12 +308,12 @@ class tl_timetracker_log extends \Contao\Backend
     public function checkFilterKunde( $varValue )
     {
         // Do not change the value if it has been set already
-        if( ($varValue > 0) || Contao\Input::post('FORM_SUBMIT') == 'tl_timetracker_log' ) {
+        if( ($varValue > 0) || Input::post('FORM_SUBMIT') == 'tl_timetracker_log' ) {
             return $varValue;
         }
 
         /** @var Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface $objSessionBag */
-        $objSessionBag = Contao\System::getContainer()->get('session')->getBag('contao_backend');
+        $objSessionBag = System::getContainer()->get('session')->getBag('contao_backend');
         $filter = $objSessionBag->get('filter');
 
         // Return the current category
@@ -317,12 +327,12 @@ class tl_timetracker_log extends \Contao\Backend
     public function checkFilterAufgabe( $varValue )
     {
         // Do not change the value if it has been set already
-        if( ($varValue > 0) || Contao\Input::post('FORM_SUBMIT') == 'tl_timetracker_log' ) {
+        if( ($varValue > 0) || Input::post('FORM_SUBMIT') == 'tl_timetracker_log' ) {
             return $varValue;
         }
 
         /** @var Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface $objSessionBag */
-        $objSessionBag = Contao\System::getContainer()->get('session')->getBag('contao_backend');
+        $objSessionBag = System::getContainer()->get('session')->getBag('contao_backend');
         $filter = $objSessionBag->get('filter');
 
         // Return the current category

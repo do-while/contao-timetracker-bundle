@@ -3,7 +3,7 @@
 /**
  * Extension for Contao 4
  *
- * @copyright  Softleister 2020-2021
+ * @copyright  Softleister 2020-2022
  * @author     Softleister <info@softleister.de>
  * @package    contao-timetracker-bundle
  * @licence    LGPL
@@ -11,30 +11,37 @@
 
 namespace Softleister\Timetracker;
 
+use Contao\Backend;
+use Contao\Input;
+use Contao\System;
+use Contao\Environment;
+use Contao\StringUtil;
 use Softleister\Timetracker\timetrackerTools;
+
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use PhpOffice\PhpSpreadsheet\IOFactory;
-use PhpOffice\PhpSpreadsheet\Reader\IReadFilter;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Worksheet\PageSetup;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
 
 //-----------------------------------------------------------------
 //  LogExport:    Exportklasse
 //-----------------------------------------------------------------
-class LogExport extends \Contao\Backend
+class LogExport extends Backend
 {
     //-----------------------------------------------------------------
     //  Function compile
     //-----------------------------------------------------------------
     public function exportLog()
     {
-        if( \Contao\Input::get('key') != 'export' ) {
+        if( Input::get('key') != 'export' ) {
             return '';
         }
         
         timetrackerTools::getSettings( true );          // Settings laden
 
         /** @var Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface $objSessionBag */
-        $objSessionBag = \Contao\System::getContainer()->get('session')->getBag('contao_backend');
+        $objSessionBag = System::getContainer()->get('session')->getBag('contao_backend');
         $filter = $objSessionBag->get('filter');
 
         // Return the current category
@@ -47,13 +54,13 @@ class LogExport extends \Contao\Backend
                                  ->execute( $kundeID );
         if( $objLog->numRows < 1 ) return 'Keine Zeiten abzurechnen.';
 
-        $datei = TL_ROOT . '/system/tmp/Zeitnachweis_' . \Contao\System::getContainer()->get('contao.slug')->generate( $GLOBALS['TIMETRACKER']['KUNDEN'][$kundeID]['kundenname'], $kundeID ) . '_' . date('my') . '.xlsx';
+        $datei = TL_ROOT . '/system/tmp/Zeitnachweis_' . System::getContainer()->get('contao.slug')->generate( $GLOBALS['TIMETRACKER']['KUNDEN'][$kundeID]['kundenname'], $kundeID ) . '_' . date('my') . '.xlsx';
 
         // Excel aufbauen
         $styleArray = [
             'borders' => [
                 'horizontal' => [
-                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    'borderStyle' => Border::BORDER_THIN,
                     'color' => ['argb' => 'E0E0E0E0'],
                 ],
             ],
@@ -63,10 +70,10 @@ class LogExport extends \Contao\Backend
         $spreadsheet->getProperties()->setTitle( basename( $datei ) );
         $sheet = $spreadsheet->getActiveSheet( );
 
-        $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_LANDSCAPE);
-        $sheet->getPageSetup()->setPaperSize(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_A4);
+        $sheet->getPageSetup()->setOrientation( PageSetup::ORIENTATION_LANDSCAPE );
+        $sheet->getPageSetup()->setPaperSize( PageSetup::PAPERSIZE_A4 );
         $sheet->getPageSetup()->setRowsToRepeatAtTopByStartAndEnd(1, 4);
-        $sheet->getHeaderFooter()->setOddFooter('&L&B' . $spreadsheet->getProperties()->getTitle() . '&C' . \Contao\Environment::get('host') . '&RSeite &P von &N');
+        $sheet->getHeaderFooter()->setOddFooter('&L&B' . $spreadsheet->getProperties()->getTitle() . '&C' . Environment::get('host') . '&RSeite &P von &N');
 
         // Überschriften
         $sheet->setCellValue( 'A1', $GLOBALS['TIMETRACKER']['KUNDEN'][$kundeID]['kundenname'] );
@@ -87,7 +94,7 @@ class LogExport extends \Contao\Backend
             if( in_array( $objLog->aufgabe, $GLOBALS['TIMETRACKER']['CALCSTOP'] ) && ($objLog->nostop != 1) ) break;    // bei ## Abrechnung ## beenden
             if( in_array( $objLog->aufgabe, $GLOBALS['TIMETRACKER']['NOLIST'] ) ) continue;                             // Eintrag nicht listen
 
-            $arrDauer = \Contao\StringUtil::trimsplit( ':', $objLog->dauer );
+            $arrDauer = StringUtil::trimsplit( ':', $objLog->dauer );
             $dauer = ($arrDauer[1] * 60) + ($arrDauer[0] * 60 * 60);                        // Dauer in Sekunden
             $summe['gesamt'] += $dauer;
             if( $objLog->noinvoice != '1' ) $summe['berechnet'] += $dauer;
@@ -99,7 +106,7 @@ class LogExport extends \Contao\Backend
             $sheet->setCellValue( 'C' . $line, $content );
             $sheet->setCellValue( 'D' . $line, $objLog->noinvoice == 1 ? 'ohne Berechnung' : '' );
             
-            $sheet->getStyle('A' . $line . ':D' . $line)->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_TOP);
+            $sheet->getStyle('A' . $line . ':D' . $line)->getAlignment()->setVertical( Alignment::VERTICAL_TOP );
             if( $objLog->noinvoice == 1 ) $sheet->getStyle('A' . $line . ':D' . $line)->getFont()->getColor()->setRGB('808080');
             $zeilen = substr_count( $content, "\n" ) + 1;
             $sheet->getRowDimension($line)->setRowHeight( (12.5 * $zeilen) + 2);
@@ -107,7 +114,7 @@ class LogExport extends \Contao\Backend
         }
         $line++;
 
-        $sheet->getStyle('A4:B' . $line)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+        $sheet->getStyle('A4:B' . $line)->getAlignment()->setHorizontal( Alignment::HORIZONTAL_CENTER );
         $sheet->getStyle('A4:D' . ($line-1))->applyFromArray( $styleArray );
 
         // Summe
@@ -143,7 +150,7 @@ class LogExport extends \Contao\Backend
     //-----------------------------------------------------------------
     public function openTimes()
     {
-        if( \Contao\Input::get('key') != 'opentimes' ) {
+        if( Input::get('key') != 'opentimes' ) {
             return '';
         }
         
@@ -166,7 +173,7 @@ class LogExport extends \Contao\Backend
 
         while( $objKunde->next() ) {
             $summe = ['gesamt' => 0, 'lastRE' => 0, 'berechnet' => 0 ];
-            $link = 'contao?do=timetrackerZeiten&amp;id=' . $objKunde->kundenID . '&amp;ref=' . \Contao\Input::get('ref');
+            $link = 'contao?do=timetrackerZeiten&amp;id=' . $objKunde->kundenID . '&amp;ref=' . Input::get('ref');
             $result .= '<tr><td><a href="' . $link . '" title="Zeitabrechnung ' . $objKunde->kundenname . ' aufrufen">' . $objKunde->kundenname . '</a></td><td>' . $objKunde->kundennr . '</td>';
 
             $objLog = $this->Database->prepare( "SELECT * FROM tl_timetracker_log WHERE kunde=? ORDER BY datum DESC")
@@ -180,7 +187,7 @@ class LogExport extends \Contao\Backend
                     if( in_array( $objLog->aufgabe, $GLOBALS['TIMETRACKER']['NOLIST'] ) 
                       || in_array( $objLog->aufgabe, $GLOBALS['TIMETRACKER']['CALCSTOP'] ) ) continue;                                  // Eintrag nicht listen
 
-                    $arrDauer = \Contao\StringUtil::trimsplit( ':', $objLog->dauer );
+                    $arrDauer = StringUtil::trimsplit( ':', $objLog->dauer );
                     $dauer = ($arrDauer[1] * 60) + ($arrDauer[0] * 60 * 60);                        // Dauer in Sekunden
                     $summe['gesamt'] += $dauer;                                                     // Gesamtzeit
                     if( !$restop ) {
@@ -212,7 +219,7 @@ class LogExport extends \Contao\Backend
 // log_message( __METHOD__ . ' - objKunde=' . print_r( $objKunde->row(), 1 ), 'sl_debug.log' );
 
 //         /** @var Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface $objSessionBag */
-//         $objSessionBag = \Contao\System::getContainer()->get('session')->getBag('contao_backend');
+//         $objSessionBag = System::getContainer()->get('session')->getBag('contao_backend');
 //         $filter = $objSessionBag->get('filter');
 // log_message( __METHOD__ . ' - $filter=' . print_r( $filter, 1 ), 'sl_debug.log' );
 

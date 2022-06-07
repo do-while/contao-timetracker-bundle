@@ -3,7 +3,7 @@
 /**
  * Extension for Contao 4
  *
- * @copyright  Softleister 2020
+ * @copyright  Softleister 2020-2022
  * @author     Softleister <info@softleister.de>
  * @package    contao-timetracker-bundle
  * @licence    LGPL
@@ -11,14 +11,16 @@
 
 namespace Softleister\Timetracker;
 
-use Softleister\Timetracker\timetrackerTools;
+use Contao\BackendModule;
+use Contao\Database;
+
 
 //-----------------------------------------------------------------
 //  importExport:    Import- und Exportklasse
 //
 //  Import aus "Anuko Time Tracker" https://www.anuko.com/time-tracker/index.htm
 //-----------------------------------------------------------------
-class importExport extends \BackendModule
+class importExport extends BackendModule
 {
     /**
      * Template
@@ -31,7 +33,7 @@ class importExport extends \BackendModule
     //-----------------------------------------------------------------
     protected function compile()
     {
-        $db = \Database::getInstance();
+        $db = Database::getInstance();
 
         //=== Import Projekte ===
         // $objKunde = $db->prepare("SELECT * FROM tt_projects ORDER BY id")->execute();

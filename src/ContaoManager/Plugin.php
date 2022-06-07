@@ -3,7 +3,7 @@
 /**
  * Extension for Contao 4
  *
- * @copyright  Softleister 2020
+ * @copyright  Softleister 2020-2022
  * @author     Softleister <info@softleister.de>
  * @package    contao-timetracker-bundle
  */

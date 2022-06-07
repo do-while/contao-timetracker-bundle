@@ -1,7 +1,5 @@
 {
     "name": "do-while/contao-timetracker-bundle",
-    "version": "0.2.0",
-    "time": "2020-12-30",
     "description": "Simple Zeiterfassung",
     "keywords": ["contao", "contentelement", "timetracker"],
     "type": "contao-bundle",
