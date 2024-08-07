@@ -1,9 +1,11 @@
 <?php
 
+declare( strict_types=1 );
+
 /**
- * Extension for Contao 4
+ * Extension for Contao 5
  *
- * @copyright  Softleister 2020-2022
+ * @copyright  Softleister 2020-2024
  * @author     Softleister <info@softleister.de>
  * @package    contao-timetracker-bundle
  */

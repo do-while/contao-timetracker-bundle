@@ -1,9 +1,11 @@
 <?php
 
+declare( strict_types=1 );
+
 /**
- * Extension for Contao 4
+ * Extension for Contao 5
  *
- * @copyright  Softleister 2020-2022
+ * @copyright  Softleister 2020-2024
  * @author     Softleister <info@softleister.de>
  * @package    contao-timetracker-bundle
  * @licence    LGPL
@@ -32,12 +34,12 @@ class LogExport extends Backend
     //-----------------------------------------------------------------
     //  Function compile
     //-----------------------------------------------------------------
-    public function exportLog()
+    public function exportLog( )
     {
-        if( Input::get('key') != 'export' ) {
-            return '';
-        }
-        
+        if( Input::get('key') != 'export' ) return '';
+
+
+        $rootDir = System::getContainer( )->getParameter( 'kernel.project_dir' );
         timetrackerTools::getSettings( true );          // Settings laden
 
         /** @var Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface $objSessionBag */
@@ -54,7 +56,7 @@ class LogExport extends Backend
                                  ->execute( $kundeID );
         if( $objLog->numRows < 1 ) return 'Keine Zeiten abzurechnen.';
 
-        $datei = TL_ROOT . '/system/tmp/Zeitnachweis_' . System::getContainer()->get('contao.slug')->generate( $GLOBALS['TIMETRACKER']['KUNDEN'][$kundeID]['kundenname'], $kundeID ) . '_' . date('my') . '.xlsx';
+        $datei = $rootDir . '/system/tmp/Zeitnachweis_' . System::getContainer()->get('contao.slug')->generate( $GLOBALS['TIMETRACKER']['KUNDEN'][$kundeID]['kundenname'], $kundeID ) . '_' . date('my') . '.xlsx';
 
         // Excel aufbauen
         $styleArray = [

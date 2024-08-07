@@ -1,44 +1,44 @@
 <?php
 
+declare( strict_types=1 );
+
 /**
- * Extension for Contao 4
+ * Extension for Contao 5
  *
- * @copyright  Softleister 2020-2022
+ * @copyright  Softleister 2020-2024
  * @author     Softleister <info@softleister.de>
  * @package    contao-timetracker-bundle
  * @licence    LGPL
 */
 
+use Contao\System;
+use Symfony\Component\HttpFoundation\Request;
 use Softleister\Timetracker\timetrackerTools;
 
-timetrackerTools::getSettings();            // Settings laden
+timetrackerTools::getSettings( );           // Settings laden
 
 //-------------------------------------------------------------------------
 // Back end modules
 //-------------------------------------------------------------------------
-array_insert($GLOBALS['BE_MOD'], 0, array
-(
-    'timetracker' => array
-    (
-        'timetrackerZeiten' => array
-        (
-            'tables'      => array('tl_timetracker_log'),
-            'export'      => array('\Softleister\Timetracker\LogExport', 'exportLog'),
-            'opentimes'   => array('\Softleister\Timetracker\LogExport', 'openTimes')
-        ),
-        'timetrackerSetting' => array
-        (
-            'tables'      => array('tl_timetracker_setting'),
-        ),
-    )
-));
+$GLOBALS['BE_MOD']['timetracker'] = [
+    'timetrackerZeiten' => [
+        'tables'      => ['tl_timetracker_log'],
+        'export'      => ['\Softleister\Timetracker\LogExport', 'exportLog'],
+        'opentimes'   => ['\Softleister\Timetracker\LogExport', 'openTimes'],
+    ],
+    'timetrackerSetting' => [
+        'tables'      => ['tl_timetracker_setting'],
+    ],
+];
 
 
 //-------------------------------------------------------------------------
 // Style sheet
 //-------------------------------------------------------------------------
-if (TL_MODE == 'BE')
-{
+if( System::getContainer( )->get( 'contao.routing.scope_matcher' )
+                           ->isBackendRequest( System::getContainer( )->get( 'request_stack' )
+                           ->getCurrentRequest( ) ?? Request::create(''))) {
+
     $GLOBALS['TL_CSS'][] = 'bundles/softleistertimetracker/styles.css|static';
 }
 
