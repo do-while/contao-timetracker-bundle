@@ -44,34 +44,34 @@ $GLOBALS['TL_DCA']['tl_timetracker_setting'] = [
             'format'                  => &$GLOBALS['TL_LANG']['tl_timetracker_setting']['title'],
             'label_callback'          => array('tl_timetracker_setting', 'getLabel')
         ],
-        'global_operations' => [
-            'all' => [
-                'label'               => &$GLOBALS['TL_LANG']['MSC']['all'],
-                'href'                => 'act=select',
-                'class'               => 'header_edit_all',
-                'attributes'          => 'onclick="Backend.getScrollOffset()" accesskey="e"'
-            ]
-        ],
-        'operations' => [
-            'edit' => [
-                'href'                => 'act=edit',
-                'icon'                => 'edit.svg'
-            ],
-            'copy' => [
-                'href'                => 'act=paste&amp;mode=copy',
-                'icon'                => 'copy.svg',
-                'attributes'          => 'onclick="Backend.getScrollOffset()"'
-            ],
-            'delete' => [
-                'href'                => 'act=delete',
-                'icon'                => 'delete.svg',
-                'attributes'          => 'onclick="if(!confirm(\'' . $GLOBALS['TL_LANG']['MSC']['deleteConfirm'] . '\'))return false;Backend.getScrollOffset()"'
-            ],
-            'show' => [
-                'href'                => 'act=show',
-                'icon'                => 'show.svg'
-            ],
-        ]
+        // 'global_operations' => [
+        //     'all' => [
+        //         'label'               => &$GLOBALS['TL_LANG']['MSC']['all'],
+        //         'href'                => 'act=select',
+        //         'class'               => 'header_edit_all',
+        //         'attributes'          => 'onclick="Backend.getScrollOffset()" accesskey="e"'
+        //     ]
+        // ],
+        // 'operations' => [
+        //     'edit' => [
+        //         'href'                => 'act=edit',
+        //         'icon'                => 'edit.svg'
+        //     ],
+        //     'copy' => [
+        //         'href'                => 'act=paste&amp;mode=copy',
+        //         'icon'                => 'copy.svg',
+        //         'attributes'          => 'onclick="Backend.getScrollOffset()"'
+        //     ],
+        //     'delete' => [
+        //         'href'                => 'act=delete',
+        //         'icon'                => 'delete.svg',
+        //         'attributes'          => 'onclick="if(!confirm(\'' . $GLOBALS['TL_LANG']['MSC']['deleteConfirm'] . '\'))return false;Backend.getScrollOffset()"'
+        //     ],
+        //     'show' => [
+        //         'href'                => 'act=show',
+        //         'icon'                => 'show.svg'
+        //     ],
+        // ]
     ],
 
     // Palettes
