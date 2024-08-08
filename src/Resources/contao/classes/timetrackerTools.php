@@ -29,7 +29,7 @@ class timetrackerTools extends Backend
         if( isset( $GLOBALS['TIMETRACKER'] ) && is_array( $GLOBALS['TIMETRACKER']['KUNDEN'] ) && !$force ) return true;
 
         // installierte Version
-        $GLOBALS['TIMETRACKER']['VERSION'] = System::getContainer()->getParameter('kernel.packages')['do-while/contao-timetracker-bundle'];
+        // $GLOBALS['TIMETRACKER']['VERSION'] = System::getContainer()->getParameter('kernel.packages')['do-while/contao-timetracker-bundle'];
 
         // Globale Arrays auffbauen
         $db = Database::getInstance();
