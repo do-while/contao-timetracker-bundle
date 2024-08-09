@@ -91,13 +91,13 @@ $GLOBALS['TL_DCA']['tl_timetracker_setting'] = [
     // Fields
     'fields' => [
         'id' => [
-            'sql'                     => "int(10) unsigned NOT NULL auto_increment"
+            'sql'                     => ['type' => 'integer', 'notnull' => false, 'unsigned' => true, 'autoincrement' => true]
         ],
         'tstamp' => [
-            'sql'                     => "int(10) unsigned NOT NULL default '0'"
+            'sql'                     => ['type' => 'integer', 'notnull' => false, 'unsigned' => true, 'default' => '0']
         ],
         'pid' => [
-            'sql'                     => "int(10) unsigned NOT NULL default '0'"
+            'sql'                     => ['type' => 'integer', 'notnull' => false, 'unsigned' => true, 'default' => '0']
         ],
 //--------
         'type' => [
@@ -108,7 +108,7 @@ $GLOBALS['TL_DCA']['tl_timetracker_setting'] = [
             'options'                 => ['kunde', 'task'],
             'reference'               => &$GLOBALS['TL_LANG']['tl_timetracker_setting']['type_'],
             'eval'                    => ['mandatory'=>true, 'includeBlankOption'=>true, 'chosen'=>true, 'submitOnChange'=>true, 'tl_class'=>'w50'],
-            'sql'                     => "varchar(16) NOT NULL default ''"
+            'sql'                     => ['type' => 'string', 'length' => 16, 'default' => '']
         ],
         'beschreibung' => [
             'exclude'                 => true,
@@ -124,7 +124,7 @@ $GLOBALS['TL_DCA']['tl_timetracker_setting'] = [
             'filter'                  => true,
             'inputType'               => 'checkbox',
             'eval'                    => ['tl_class'=>'m12 w50'],
-            'sql'                     => "char(1) NOT NULL default ''"
+            'sql'                     => ['type' => 'boolean', 'default' => false]
         ],
 //--- Kunde/Projekt ---
         'kundenname' => [
@@ -132,34 +132,34 @@ $GLOBALS['TL_DCA']['tl_timetracker_setting'] = [
             'search'                  => true,
             'inputType'               => 'text',
             'eval'                    => ['mandatory'=>true, 'maxlength'=>255, 'tl_class'=>'w50'],
-            'sql'                     => "varchar(255) NOT NULL default ''"
+            'sql'                     => ['type' => 'string', 'length' => 255, 'default' => '']
         ],
         'kundennr' => [
             'exclude'                 => true,
             'search'                  => true,
             'inputType'               => 'text',
             'eval'                    => ['maxlength'=>8, 'tl_class'=>'w50'],
-            'sql'                     => "varchar(8) NOT NULL default ''"
+            'sql'                     => ['type' => 'string', 'length' => 8, 'default' => '']
         ],
         'kundenID' => [
             'exclude'                 => true,
             'inputType'               => 'text',
             'eval'                    => ['maxlength'=>8, 'readonly'=>true, 'tl_class'=>'w50'],
-            'sql'                     => "int(10) unsigned NOT NULL default '0'"
+            'sql'                     => ['type' => 'integer', 'notnull' => false, 'unsigned' => true, 'default' => '0']
         ],
         'agentur' => [
             'exclude'                 => true,
             'search'                  => true,
             'inputType'               => 'text',
             'eval'                    => ['maxlength'=>255, 'tl_class'=>'w50'],
-            'sql'                     => "varchar(255) NOT NULL default ''"
+            'sql'                     => ['type' => 'string', 'length' => 255, 'default' => '']
         ],
         'stundensatz' => [
             'exclude'                 => true,
             'filter'                  => true,
             'inputType'               => 'text',
             'eval'                    => ['maxlength'=>8, 'tl_class'=>'w50'],
-            'sql'                     => "varchar(8) NOT NULL default ''"
+            'sql'                     => ['type' => 'string', 'length' => 8, 'default' => '']
         ],
 //--- Aufgabe/Dienstleistung ---
         'aufgabe' => [
@@ -167,48 +167,48 @@ $GLOBALS['TL_DCA']['tl_timetracker_setting'] = [
             'search'                  => true,
             'inputType'               => 'text',
             'eval'                    => ['mandatory'=>true, 'maxlength'=>255, 'tl_class'=>'w50'],
-            'sql'                     => "varchar(255) NOT NULL default ''"
+            'sql'                     => ['type' => 'string', 'length' => 255, 'default' => '']
         ],
         'taskID' => [
             'exclude'                 => true,
             'inputType'               => 'text',
             'eval'                    => ['maxlength'=>8, 'readonly'=>true, 'tl_class'=>'w50'],
-            'sql'                     => "int(10) unsigned NOT NULL default '0'"
+            'sql'                     => ['type' => 'integer', 'notnull' => false, 'unsigned' => true, 'default' => '0']
         ],
         'abrechnung' => [
             'exclude'                 => true,
             'filter'                  => true,
             'inputType'               => 'checkbox',
             'eval'                    => ['tl_class'=>'m12 w50'],
-            'sql'                     => "char(1) NOT NULL default ''"
+            'sql'                     => ['type' => 'boolean', 'default' => false]
         ],
         'calcstop' => [
             'exclude'                 => true,
             'filter'                  => true,
             'inputType'               => 'checkbox',
             'eval'                    => ['tl_class'=>'m12 w50'],
-            'sql'                     => "char(1) NOT NULL default ''"
+            'sql'                     => ['type' => 'boolean', 'default' => false]
         ],
         'nolist' => [
             'exclude'                 => true,
             'filter'                  => true,
             'inputType'               => 'checkbox',
             'eval'                    => ['tl_class'=>'m12 w50'],
-            'sql'                     => "char(1) NOT NULL default ''"
+            'sql'                     => ['type' => 'boolean', 'default' => false]
         ],
         'defaultid' => [
             'exclude'                 => true,
             'filter'                  => true,
             'inputType'               => 'checkbox',
             'eval'                    => ['tl_class'=>'m12 w50'],
-            'sql'                     => "char(1) NOT NULL default ''"
+            'sql'                     => ['type' => 'boolean', 'default' => false]
         ],
         'hidelist' => [
             'exclude'                 => true,
             'filter'                  => true,
             'inputType'               => 'checkbox',
             'eval'                    => ['tl_class'=>'m12 w50'],
-            'sql'                     => "char(1) NOT NULL default ''"
+            'sql'                     => ['type' => 'boolean', 'default' => false]
         ],
 //--------
     ]

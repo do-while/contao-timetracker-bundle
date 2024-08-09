@@ -25,6 +25,7 @@ $GLOBALS['BE_MOD']['timetracker'] = [
         'tables'      => ['tl_timetracker_log'],
         'export'      => ['\Softleister\Timetracker\LogExport', 'exportLog'],
         'opentimes'   => ['\Softleister\Timetracker\LogExport', 'openTimes'],
+        'javascript'  => ['bundles/softleistertimetracker/timetracker.js'],
     ],
     'timetrackerSetting' => [
         'tables'      => ['tl_timetracker_setting'],

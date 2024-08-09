@@ -11,11 +11,12 @@ declare( strict_types=1 );
  * @licence    LGPL
 */
 
-use Contao\Backend;
-use Contao\DC_Table;
-use Contao\BackendUser;
 use Contao\Input;
 use Contao\System;
+use Contao\Backend;
+use Contao\Database;
+use Contao\DC_Table;
+use Contao\BackendUser;
 
 
 $GLOBALS['TL_DCA']['tl_timetracker_log'] = [
@@ -23,9 +24,7 @@ $GLOBALS['TL_DCA']['tl_timetracker_log'] = [
     'config' => [
         'dataContainer'               => DC_Table::class,
         'enableVersioning'            => true,
-        'onload_callback' => [
-            ['tl_timetracker_log', 'setKundenID']
-        ],
+        'onload_callback'             => [ ['tl_timetracker_log', 'setKundenID'] ],
         'sql' => [
             'keys' => [
                 'id' => 'primary',
@@ -46,40 +45,17 @@ $GLOBALS['TL_DCA']['tl_timetracker_log'] = [
             'format'                  => '%s / %s / %s / %s',
             'label_callback'          => ['tl_timetracker_log', 'logLabel']
         ],
-        // 'global_operations' => [
-        //     'export' => [
-        //         'href'                => 'key=export',
-        //         'class'               => 'header_xls_export',
-        //     ],
-        //     'opentimes' => [
-        //         'href'                => 'key=opentimes',
-        //         'class'               => 'header_opentimes',
-        //     ],
-        //     'all' => [
-        //         'href'                => 'act=select',
-        //         'class'               => 'header_edit_all',
-        //         'attributes'          => 'onclick="Backend.getScrollOffset()" accesskey="e"'
-        //     ],
-        // ],
-        // 'operations' => [
-        //     'edit' => [
-        //         'href'                => 'act=edit',
-        //         'icon'                => 'edit.svg'
-        //     ],
-        //     'copy' => [
-        //         'href'                => 'act=copy',
-        //         'icon'                => 'copy.svg'
-        //     ],
-        //     'delete' => [
-        //         'href'                => 'act=delete',
-        //         'icon'                => 'delete.svg',
-        //         'attributes'          => 'onclick="if(!confirm(\'' . $GLOBALS['TL_LANG']['MSC']['deleteConfirm'] . '\'))return false;Backend.getScrollOffset()"'
-        //     ],
-        //     'show' => [
-        //         'href'                => 'act=show',
-        //         'icon'                => 'show.svg'
-        //     ],
-        // ]
+        'global_operations' => [
+            'export' => [
+                'href'                => 'key=export',
+                'class'               => 'header_xls_export',
+            ],
+            'opentimes' => [
+                'href'                => 'key=opentimes',
+                'class'               => 'header_opentimes',
+            ],
+            'all'
+        ],
     ],
 
     // Palettes
@@ -93,13 +69,13 @@ $GLOBALS['TL_DCA']['tl_timetracker_log'] = [
     // Fields
     'fields' => [
         'id' => [
-            'sql'                     => "int(10) unsigned NOT NULL auto_increment"
+            'sql'                     => ['type' => 'integer', 'notnull' => false, 'unsigned' => true, 'autoincrement' => true]
         ],
         'tstamp' => [
-            'sql'                     => "int(10) unsigned NOT NULL default '0'"
+            'sql'                     => ['type' => 'integer', 'notnull' => false, 'unsigned' => true, 'default' => '0']
         ],
         'pid' => [
-            'sql'                     => "int(10) unsigned NOT NULL default '0'",
+            'sql'                     => ['type' => 'integer', 'notnull' => false, 'unsigned' => true, 'default' => '0']
         ],
 //--------
         'kunde' => [
@@ -112,7 +88,7 @@ $GLOBALS['TL_DCA']['tl_timetracker_log'] = [
             'options_callback'        => ['tl_timetracker_log', 'getTimetrackerKunden'],
             'load_callback'           => [ ['tl_timetracker_log', 'checkFilterKunde'] ],
             'eval'                    => ['mandatory'=>true, 'chosen'=>true, 'tlass'=>'clr w50', 'includeBlankOption'=>true],
-            'sql'                     => "varchar(80) NOT NULL default '"
+            'sql'                     => ['type' => 'string', 'length' => 80, 'default' => '']
         ],
         'aufgabe' => [
             'exclude'                 => true,
@@ -125,7 +101,7 @@ $GLOBALS['TL_DCA']['tl_timetracker_log'] = [
             'options_callback'        => ['tl_timetracker_log', 'getTimetrackerAufgaben'],
             'load_callback'           => [ ['tl_timetracker_log', 'checkFilterAufgabe'] ],
             'eval'                    => ['mandatory'=>true, 'chosen'=>true, 'tl_class'=>'w50', 'includeBlankOption'=>true],
-            'sql'                     => "varchar(11) NOT NULL default ''"
+            'sql'                     => ['type' => 'string', 'length' => 11, 'default' => '']
         ],
 //--------
         'datum' => [
@@ -137,20 +113,20 @@ $GLOBALS['TL_DCA']['tl_timetracker_log'] = [
             'inputType'               => 'text',
             'eval'                    => ['rgxp'=>'date', 'datepicker'=>true, 'tl_class'=>'w50 wizard'],
             'load_callback'           => [ ['tl_timetracker_log', 'loadDate'] ],
-            'sql'                     => "varchar(11) NOT NULL default ''"
+            'sql'                     => ['type' => 'string', 'length' => 11, 'default' => '']
         ],
         'dauer' => [
             'exclude'                 => true,
             'inputType'               => 'text',
             'eval'                    => ['tl_class'=>'clr w50'],
-            'sql'                     => "varchar(5) NOT NULL default ''"
+            'sql'                     => ['type' => 'string', 'length' => 5, 'default' => '']
         ],
         'startzeit' => [
             'exclude'                 => true,
             'inputType'               => 'text',
             'eval'                    => ['rgxp'=>'time', 'doNotCopy'=>true, 'tl_class'=>'w50'],
             'load_callback'           => [ ['tl_timetracker_log', 'loadTime'] ],
-            'sql'                     => "varchar(6) NOT NULL default ''"
+            'sql'                     => ['type' => 'string', 'length' => 6, 'default' => '']
         ],
 //--------
         'beschreibung' => [
@@ -165,14 +141,14 @@ $GLOBALS['TL_DCA']['tl_timetracker_log'] = [
             'filter'                  => true,
             'inputType'               => 'checkbox',
             'eval'                    => ['doNotCopy'=>true, 'tl_class'=>'m12 w50'],
-            'sql'                     => "char(1) NOT NULL default ''"
+            'sql'                     => ['type' => 'boolean', 'default' => false]
         ],
         'nostop' => [
             'exclude'                 => true,
             'filter'                  => true,
             'inputType'               => 'checkbox',
             'eval'                    => ['doNotCopy'=>true, 'tl_class'=>'m12 w50'],
-            'sql'                     => "char(1) NOT NULL default ''"
+            'sql'                     => ['type' => 'boolean', 'default' => false]
         ],
 //--------
         'username' => [
@@ -182,7 +158,7 @@ $GLOBALS['TL_DCA']['tl_timetracker_log'] = [
             'inputType'               => 'select',
             'foreignKey'              => 'tl_user.name',
             'eval'                    => ['doNotCopy'=>true, 'mandatory'=>true, 'chosen'=>true, 'includeBlankOption'=>true, 'tl_class'=>'w50'],
-            'sql'                     => "int(10) unsigned NOT NULL default 0",
+            'sql'                     => ['type' => 'integer', 'notnull' => false, 'unsigned' => true, 'default' => '0'],
             'relation'                => ['type'=>'hasOne', 'load'=>'lazy']
         ],
         'member' => [
@@ -191,7 +167,7 @@ $GLOBALS['TL_DCA']['tl_timetracker_log'] = [
             'inputType'               => 'select',
             'foreignKey'              => 'tl_member.username',
             'eval'                    => ['doNotCopy'=>true, 'chosen'=>true, 'includeBlankOption'=>true, 'tl_class'=>'w50'],
-            'sql'                     => "int(10) unsigned NOT NULL default 0",
+            'sql'                     => ['type' => 'integer', 'notnull' => false, 'unsigned' => true, 'default' => '0'],
             'relation'                => ['type'=>'hasOne', 'load'=>'lazy']
         ],
     ]
@@ -220,9 +196,9 @@ class tl_timetracker_log extends Backend
     //---------------------------------------------------------------
     //  Aufruf mit ID?  Dann Filter setzen
     //---------------------------------------------------------------
-    public function setKundenID()
+    public function setKundenID( )
     {
-        if( empty( Input::get('id') ) ) return;           // keine Einschränkung bei direktem Aufruf
+        if( Input::get('id') == '' ) return;           // keine Einschränkung bei direktem Aufruf
 
         $GLOBALS['TL_DCA']['tl_timetracker_log']['list']['sorting']['filter'][] = array( 'kunde=?', Input::get('id') );
     }
@@ -260,7 +236,7 @@ class tl_timetracker_log extends Backend
         }
 
         /** @var Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface $objSessionBag */
-        $objSessionBag = System::getContainer()->get('session')->getBag('contao_backend');
+        $objSessionBag = System::getContainer( )->get( 'request_stack' )->getSession( )->getBag( 'contao_backend' );
         $filter = $objSessionBag->get('filter');
 
         // Return the current category
@@ -279,7 +255,7 @@ class tl_timetracker_log extends Backend
         }
 
         /** @var Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface $objSessionBag */
-        $objSessionBag = System::getContainer()->get('session')->getBag('contao_backend');
+        $objSessionBag = System::getContainer( )->get( 'request_stack' )->getSession( )->getBag( 'contao_backend' );
         $filter = $objSessionBag->get('filter');
 
         // Return the current category
@@ -292,7 +268,8 @@ class tl_timetracker_log extends Backend
     //---------------------------------------------------------------
     public function getTimetrackerKunden( )
     {
-        $objKunde = $this->Database->execute( "SELECT kundenID, kundenname, kundennr FROM tl_timetracker_setting WHERE type='kunde' AND active=1 ORDER BY kundenname" );
+        $db = Database::getinstance( );
+        $objKunde = $db->execute( "SELECT kundenID, kundenname, kundennr FROM tl_timetracker_setting WHERE type='kunde' AND active=1 ORDER BY kundenname" );
         
         $arrKunden = [];
         while( $objKunde->next() ) {
@@ -308,7 +285,8 @@ class tl_timetracker_log extends Backend
     //---------------------------------------------------------------
     public function getTimetrackerAufgaben( )
     {
-        $objAufg = $this->Database->execute( "SELECT taskID, aufgabe FROM tl_timetracker_setting WHERE type='task' AND active=1 ORDER BY aufgabe" );
+        $db = Database::getinstance( );
+        $objAufg = $db->execute( "SELECT taskID, aufgabe FROM tl_timetracker_setting WHERE type='task' AND active=1 ORDER BY aufgabe" );
         
         $arrAufgaben = [];
         while( $objAufg->next() ) {
@@ -324,8 +302,6 @@ class tl_timetracker_log extends Backend
     //---------------------------------------------------------------
     public function logLabel( $row, $label )
     {
-// log_message( __METHOD__ . ' - row=' . print_r( $row, 1 ), 'sl_debug.log' );
-
         $css = $row['noinvoice'] == '1' ? ' noinvoice' : '';
 
         $label = '<div class="logrow' . $css . '"><p><strong><span>' . date( 'd.m.Y', $row['datum'] ) . ' - ' . $row['dauer'] . '</span><span>' 

@@ -14,8 +14,10 @@ declare( strict_types=1 );
 namespace Softleister\Timetracker;
 
 use Contao\Backend;
-use Contao\System;
 use Contao\Database;
+use Composer\InstalledVersions;
+
+// \file_put_contents( '../var/logs/sl-debug.log', __METHOD__ . ': content = ' . \print_r($content, true). "\n", FILE_APPEND );
 
 //-----------------------------------------------------------------
 //  timetrackerTools:    Hilfsprogramme zu dieser Erweiterung
@@ -29,7 +31,7 @@ class timetrackerTools extends Backend
         if( isset( $GLOBALS['TIMETRACKER'] ) && is_array( $GLOBALS['TIMETRACKER']['KUNDEN'] ) && !$force ) return true;
 
         // installierte Version
-        // $GLOBALS['TIMETRACKER']['VERSION'] = System::getContainer()->getParameter('kernel.packages')['do-while/contao-timetracker-bundle'];
+        $GLOBALS['TIMETRACKER']['VERSION'] = InstalledVersions::getPrettyVersion('do-while/contao-timetracker-bundle');
 
         // Globale Arrays auffbauen
         $db = Database::getInstance();
