@@ -1,0 +1,11 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    Softleister\TimetrackerBundle\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/SoftleisterTimetrackerBundle.php'
+            - '../src/ContaoManager/'

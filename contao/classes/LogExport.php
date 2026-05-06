@@ -103,9 +103,10 @@ class LogExport extends Backend
                 if( $objLog->noinvoice != '1' ) $summe['berechnet'] += $dauer;
             }
 
-            $content = str_replace( ['<br>', '</p>', '<p>', '[lt]', '[gt]', '&#34;', '&#61;', '[nbsp]'], 
-                                    ["\n",   "\n",   ' ',   '<',    '>',    '"',     '=',     ' '     ],
-                                    strip_tags( $objLog->beschreibung, '<br><p>' ) );
+            $content = trim( preg_replace( '/\n{2,}/', "\n",
+                             str_replace( ['<br>', '</p>', '<p>', '[lt]', '[gt]', '&#34;', '&#61;', '[nbsp]'],
+                                          ["\n",   "\n",   '',    '<',    '>',    '"',     '=',     ' '     ],
+                                          strip_tags( $objLog->beschreibung, '<br><p>' ) ) ) );
 
             $sheet->setCellValue( 'A' . $line, date( 'd.m.Y', (int) $objLog->datum ) );
             if( isset( $dauer ) ) {
@@ -113,11 +114,11 @@ class LogExport extends Backend
             }
             $sheet->setCellValue( 'C' . $line, $content );
             $sheet->setCellValue( 'D' . $line, $objLog->noinvoice == 1 ? 'ohne Berechnung' : '' );
-            
+
             $sheet->getStyle( 'A' . $line . ':D' . $line )->getAlignment( )->setVertical( Alignment::VERTICAL_TOP );
+            $sheet->getStyle( 'C' . $line )->getAlignment( )->setWrapText( true );
             if( $objLog->noinvoice == 1 ) $sheet->getStyle( 'A' . $line . ':D' . $line )->getFont( )->getColor( )->setRGB( '808080' );
-            $zeilen = substr_count( $content, "\n" ) + 1;
-            $sheet->getRowDimension( $line )->setRowHeight( ( 12.5 * $zeilen ) + 2 );
+            $sheet->getRowDimension( $line )->setRowHeight( -1 );           // Auto-Höhe: LibreOffice/Excel passt selbst an
             $line++;
         }
         $line++;
@@ -174,8 +175,8 @@ class LogExport extends Backend
                 . '</tr></thead>'
                 . '<tbody>';
 
-        $objKunde = $this->Database->prepare( "SELECT * FROM tl_timetracker_setting WHERE type=? AND active=1 AND hidelist<>1 ORDER BY kundenname" )
-                                   ->execute( 'kunde' );
+        $objKunde = $this->Database->prepare( "SELECT * FROM tl_timetracker_kunde WHERE active=1 AND hidelist<>1 ORDER BY kundenname" )
+                                   ->execute( );
         if( $objKunde->numRows < 1 ) return 'Keine Kunden gefunden.';
 
         while( $objKunde->next( ) ) {

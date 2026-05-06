@@ -5,7 +5,7 @@ declare( strict_types=1 );
 /**
  * Extension for Contao 5
  *
- * @copyright  Softleister 2020-2024
+ * @copyright  Softleister 2020-2026
  * @author     Softleister <info@softleister.de>
  * @package    contao-timetracker-bundle
  * @licence    LGPL
@@ -33,29 +33,16 @@ class timetrackerTools extends Backend
         // installierte Version
         $GLOBALS['TIMETRACKER']['VERSION'] = InstalledVersions::getPrettyVersion('do-while/contao-timetracker-bundle');
 
-        // Globale Arrays auffbauen
+        // Globale Arrays aufbauen
         $db = Database::getInstance();
 
         $arrTables = $db->listTables( null, true );
-        if( !in_array( 'tl_timetracker_setting', $arrTables ) ) return true;                // Einstellungen nicht vorhanden -> Abbruch
-
-        $arrSpalten = $db->listFields( 'tl_timetracker_setting', true );                    // Prüfen, ob alle benötigten Spalten vorhanden
-        foreach( $arrSpalten AS $field ) $arrFields[] = $field['name'];
-        if( !in_array( 'kundenID', $arrFields )
-          || !in_array( 'kundenname', $arrFields )
-          || !in_array( 'kundennr', $arrFields )
-          || !in_array( 'agentur', $arrFields )
-          || !in_array( 'stundensatz', $arrFields )
-          || !in_array( 'type', $arrFields )
-          || !in_array( 'active', $arrFields )
-          || !in_array( 'taskID', $arrFields )
-          || !in_array( 'calcstop', $arrFields )
-          || !in_array( 'nolist', $arrFields )
-          || !in_array( 'defaultid', $arrFields ) ) return true;
+        if( !in_array( 'tl_timetracker_kunde', $arrTables )
+          || !in_array( 'tl_timetracker_task', $arrTables ) ) return true;                  // Tabellen nicht vorhanden -> Abbruch
 
         // Kunden-Array
         $arrKunden = [];
-        $objKunden = $db->execute( "SELECT kundenID, kundenname, kundennr, agentur, stundensatz FROM tl_timetracker_setting WHERE type='kunde' ORDER BY kundenID");
+        $objKunden = $db->execute( "SELECT kundenID, kundenname, kundennr, agentur, stundensatz FROM tl_timetracker_kunde ORDER BY kundenID" );
         while( $objKunden->next() ) {
             $arrKunden[$objKunden->kundenID] = $objKunden->row();
         }
@@ -64,7 +51,7 @@ class timetrackerTools extends Backend
         // Stop-Code-Array
         $arrCalcStop = $arrNoList = [];
         $defaultid = 0;
-        $objStop = $db->execute( "SELECT taskID, calcstop, nolist, defaultid FROM tl_timetracker_setting WHERE type='task' AND active=1 ORDER BY taskID");
+        $objStop = $db->execute( "SELECT taskID, calcstop, nolist, defaultid FROM tl_timetracker_task WHERE active=1 ORDER BY taskID" );
         while( $objStop->next() ) {
             if( $objStop->calcstop ) $arrCalcStop[] = $objStop->taskID;
             if( $objStop->nolist ) $arrNoList[] = $objStop->taskID;

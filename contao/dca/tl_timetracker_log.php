@@ -5,18 +5,19 @@ declare( strict_types=1 );
 /**
  * Extension for Contao 5
  *
- * @copyright  Softleister 2020-2024
+ * @copyright  Softleister 2020-2026
  * @author     Softleister <info@softleister.de>
  * @package    contao-timetracker-bundle
  * @licence    LGPL
 */
 
+use Contao\Backend;
+use Contao\BackendUser;
+use Contao\Database;
+use Contao\DataContainer;
+use Contao\DC_Table;
 use Contao\Input;
 use Contao\System;
-use Contao\Backend;
-use Contao\Database;
-use Contao\DC_Table;
-use Contao\BackendUser;
 
 
 $GLOBALS['TL_DCA']['tl_timetracker_log'] = [
@@ -35,8 +36,8 @@ $GLOBALS['TL_DCA']['tl_timetracker_log'] = [
     // List
     'list' => [
         'sorting' => [
-            'mode'                    => 2,
-            'flag'                    => 6,
+            'mode'                    => DataContainer::MODE_SORTABLE,
+            'flag'                    => DataContainer::SORT_DAY_DESC,
             'fields'                  => ['datum DESC'],
             'panelLayout'             => 'filter;sort,search,limit'
         ],
@@ -49,10 +50,12 @@ $GLOBALS['TL_DCA']['tl_timetracker_log'] = [
             'export' => [
                 'href'                => 'key=export',
                 'class'               => 'header_xls_export',
+                'primary'             => true
             ],
             'opentimes' => [
                 'href'                => 'key=opentimes',
                 'class'               => 'header_opentimes',
+                'primary'             => true
             ],
             'all'
         ],
@@ -95,7 +98,7 @@ $GLOBALS['TL_DCA']['tl_timetracker_log'] = [
             'filter'                  => true,
             'sorting'                 => true,
             'search'                  => true,
-            'default'                 => $GLOBALS['TIMETRACKER']['DEFAULT'],
+            'default'                 => $GLOBALS['TIMETRACKER']['DEFAULT'] ?? 0,
             'flag'                    => 1,
             'inputType'               => 'select',
             'options_callback'        => ['tl_timetracker_log', 'getTimetrackerAufgaben'],
@@ -268,12 +271,12 @@ class tl_timetracker_log extends Backend
     //---------------------------------------------------------------
     public function getTimetrackerKunden( )
     {
-        $db = Database::getinstance( );
-        $objKunde = $db->execute( "SELECT kundenID, kundenname, kundennr FROM tl_timetracker_setting WHERE type='kunde' AND active=1 ORDER BY kundenname" );
-        
+        $db = Database::getInstance( );
+        $objKunde = $db->execute( "SELECT kundenID, kundenname, kundennr FROM tl_timetracker_kunde WHERE active=1 ORDER BY kundenname" );
+
         $arrKunden = [];
         while( $objKunde->next() ) {
-            $arrKunden[$objKunde->kundenID] = $objKunde->kundenname . (empty($objKunde->kundennr) ? '' :  ' (' . $objKunde->kundennr . ')');
+            $arrKunden[$objKunde->kundenID] = $objKunde->kundenname . (empty($objKunde->kundennr) ? '' : ' (' . $objKunde->kundennr . ')');
         }
 
         return $arrKunden;
@@ -285,9 +288,9 @@ class tl_timetracker_log extends Backend
     //---------------------------------------------------------------
     public function getTimetrackerAufgaben( )
     {
-        $db = Database::getinstance( );
-        $objAufg = $db->execute( "SELECT taskID, aufgabe FROM tl_timetracker_setting WHERE type='task' AND active=1 ORDER BY aufgabe" );
-        
+        $db = Database::getInstance( );
+        $objAufg = $db->execute( "SELECT taskID, aufgabe FROM tl_timetracker_task WHERE active=1 ORDER BY aufgabe" );
+
         $arrAufgaben = [];
         while( $objAufg->next() ) {
             $arrAufgaben[$objAufg->taskID] = $objAufg->aufgabe;
@@ -302,11 +305,15 @@ class tl_timetracker_log extends Backend
     //---------------------------------------------------------------
     public function logLabel( $row, $label )
     {
-        $css = $row['noinvoice'] == '1' ? ' noinvoice' : '';
+        $aufgabe = $this->arrAufgaben[$row['aufgabe']] ?? '';
 
-        $label = '<div class="logrow' . $css . '"><p><strong><span>' . date( 'd.m.Y', $row['datum'] ) . ' - ' . $row['dauer'] . '</span><span>' 
-                                              . $this->arrKunden[$row['kunde']] . '</span><span>' 
-                                              . $this->arrAufgaben[$row['aufgabe']] . '</span></strong></p><div class="note">'
+        $css = $row['noinvoice'] == '1' ? ' noinvoice' : '';
+        $isHeading = str_starts_with( $aufgabe, '#' ) || str_starts_with( $aufgabe, '&#35;' );
+        $spanClass = $isHeading ? ' class="green"' : '';
+
+        $label = '<div class="logrow' . $css . '"><p><strong><span>' . date( 'd.m.Y', $row['datum'] ) . ' - ' . $row['dauer'] . '</span><span>'
+                                              . $this->arrKunden[$row['kunde']] . '</span><span' . $spanClass . '>'
+                                              . $aufgabe . '</span></strong></p><div class="note">'
                                               . $row['beschreibung'] . '</div></div>';
 
         return $label;

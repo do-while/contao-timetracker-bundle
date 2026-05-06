@@ -1,34 +1,18 @@
 /* Styles do-while/contao-timetracker-bundle */
 #tl_navigation .group-timetracker {
     background: url(timetracker.svg) 3px 2px no-repeat;
-}
-.timetrack span:first-child {
-    display: inline-block;
-    width: 120px;
-}
-.timetrack.inactive {
-    color: #aaa;
+    background-size: 13px;
 }
 
-.tl_img_submit {
-    width: 32px;
-    height: 32px;
-    text-indent: 32px;
-    top: 0;
+.logrow span.green {
+    background-color: #1fa51f;
+    color: white;
+    padding: 2px 32px;
 }
-.filter_apply, .filter_reset {
-    background-size: 32px 32px;
+html[data-color-scheme=dark] .logrow span.green {
+    background-color: #398c39;
 }
 
-.tl_filter .tl_select {
-    max-width: 23%;
-}
-.tl_subpanel br {
-    display: none;
-}
-#kunde_chzn {
-    max-width: 46.15%;
-}
 
 .logrow span:first-child {
     display: inline-block;

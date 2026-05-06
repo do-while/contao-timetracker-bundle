@@ -5,7 +5,7 @@ declare( strict_types=1 );
 /**
  * Extension for Contao 5
  *
- * @copyright  Softleister 2020-2024
+ * @copyright  Softleister 2020-2026
  * @author     Softleister <info@softleister.de>
  * @package    contao-timetracker-bundle
  * @licence    LGPL
@@ -25,10 +25,12 @@ $GLOBALS['BE_MOD']['timetracker'] = [
         'tables'      => ['tl_timetracker_log'],
         'export'      => ['\Softleister\Timetracker\LogExport', 'exportLog'],
         'opentimes'   => ['\Softleister\Timetracker\LogExport', 'openTimes'],
-        'javascript'  => ['bundles/softleistertimetracker/timetracker.js'],
     ],
-    'timetrackerSetting' => [
-        'tables'      => ['tl_timetracker_setting'],
+    'timetrackerKunden' => [
+        'tables'      => ['tl_timetracker_kunde'],
+    ],
+    'timetrackerTasks' => [
+        'tables'      => ['tl_timetracker_task'],
     ],
 ];
 
